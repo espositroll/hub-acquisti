@@ -1,786 +1,167 @@
 <!DOCTYPE html>
-<html lang="it" class="h-full w-full overflow-hidden">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HUB ACQUISTI</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS (xlsx.full.min.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- CSS Esterno -->
-    <link rel="stylesheet" href="style.css">
+    <title>Piattaforma Glassmorphism</title>
+    <style>
+        :root {
+          --bg-main: #F8F9FA;
+          --bg-gradient: radial-gradient(circle at 10% 20%, rgba(216, 241, 233, 0.4) 0%, rgba(235, 243, 255, 0.4) 90%);
+          --glass-bg: rgba(255, 255, 255, 0.65);
+          --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+          --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+          --text-primary: #1E293B;
+          --text-secondary: #64748B;
+          --accent-color: #3B82F6;
+          --accent-glow: rgba(59, 130, 246, 0.15);
+          --radius-lg: 20px;
+          --radius-md: 12px;
+          --transition: all 0.3s ease;
+        }
+
+        body {
+          background-color: var(--bg-main);
+          background-image: var(--bg-gradient);
+          color: var(--text-primary);
+          font-family: system-ui, -apple-system, sans-serif;
+          min-height: 100vh;
+          margin: 0;
+          display: flex;
+        }
+
+        .sidebar {
+          width: 260px;
+          background: rgba(255, 255, 255, 0.7);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-right: 1px solid rgba(255, 255, 255, 0.8);
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .main-content {
+          flex: 1;
+          padding: 32px;
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          box-sizing: border-box;
+        }
+
+        .glass-panel {
+          background: var(--glass-bg);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: var(--glass-border);
+          box-shadow: var(--glass-shadow);
+          border-radius: var(--radius-lg);
+          padding: 24px;
+          transition: var(--transition);
+        }
+
+        .glass-panel:hover {
+          box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        button, .btn-glass {
+          background: rgba(255, 255, 255, 0.6);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          color: var(--text-primary);
+          border-radius: var(--radius-md);
+          padding: 10px 20px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: var(--transition);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        button:hover {
+          background: rgba(255, 255, 255, 0.85);
+          border-color: var(--accent-color);
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+          transform: translateY(-1px);
+        }
+
+        .modal-overlay {
+          background: rgba(30, 41, 59, 0.25);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          position: fixed;
+          inset: 0;
+          display: none;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-overlay.active {
+          display: flex;
+        }
+
+        .modal-content {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(24px);
+          border: var(--glass-border);
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+          border-radius: var(--radius-lg);
+          width: 100%;
+          max-width: 400px;
+          padding: 32px;
+          box-sizing: border-box;
+        }
+    </style>
 </head>
-<body class="text-slate-800 antialiased h-screen w-screen flex flex-col overflow-hidden">
+<body>
 
-    <!-- Header Principale -->
-    <header class="bg-slate-900 text-white py-2 px-4 shadow-md border-b border-slate-800 flex-none z-20">
-        <div class="w-full flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="p-1.5 bg-blue-600 rounded-lg shadow-lg">
-                    <i data-lucide="shopping-bag" class="w-5 h-5 text-white"></i>
-                </div>
-               <h1 class="text-lg font-black tracking-wider uppercase text-white leading-tight">HUB ACQUISTI</h1>
-            </div>
+    <aside class="sidebar">
+        <h3>Menu</h3>
+        <button onclick="alert('Navigazione attiva')">Dashboard</button>
+        <button onclick="alert('Navigazione attiva')">Utenti</button>
+        <button onclick="alert('Navigazione attiva')">Impostazioni</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="glass-panel" style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0;">Dashboard</h2>
+            <button id="openModal">Apri Modale</button>
+        </header>
+
+        <section class="glass-panel">
+            <h3>Panoramica</h3>
+            <p>Tutta la piattaforma è impostata con tema minimal, glass e chiaro.</p>
+        </section>
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <h3>Finestra Modale</h3>
+            <p>Questo è un esempio di modale con effetto glassmorphism.</p>
+            <button id="closeModal" style="margin-top: 16px;">Chiudi</button>
         </div>
-    </header>
-
-    <!-- Layout Principale: Menu Laterale Sinistro + Contenuto -->
-    <div class="flex-1 flex flex-row min-h-0 w-full overflow-hidden">
-
-        <!-- Navigation Bar Laterale a Sinistra -->
-        <nav class="bg-slate-800 text-slate-300 border-r border-slate-700 w-64 flex-none p-3 no-print shadow-inner flex flex-col gap-4 overflow-y-auto">
-            
-            <!-- MODULO 1: ANALISI & STRATEGIA -->
-            <div class="flex flex-col gap-1.5 bg-slate-900/80 p-2 rounded-lg border border-slate-700/80 shadow-sm">
-                <div class="flex items-center gap-1.5 px-2 py-1 bg-blue-950/60 rounded border border-blue-800/50 mb-1">
-                    <i data-lucide="line-chart" class="w-3.5 h-3.5 text-blue-400"></i>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-blue-300">Modulo Analisi</span>
-                </div>
-                <button id="btn-tab-dashboard" onclick="switchTab('tab-dashboard')" class="tab-btn w-full text-left bg-blue-600 text-white px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="layout-dashboard" class="w-3.5 h-3.5"></i> Analisi
-                </button>
-                <button id="btn-tab-comparison" onclick="switchTab('tab-comparison')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="scale" class="w-3.5 h-3.5"></i> Confronto Listini
-                </button>
-                <button id="btn-tab-forecast" onclick="switchTab('tab-forecast')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Forecast
-                </button>
-                <button id="btn-tab-abc" onclick="switchTab('tab-abc')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> ABC & Prezzi
-                </button>
-                <button id="btn-tab-reports" onclick="switchTab('tab-reports')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i> Dossier Direzionale
-                </button>
-            </div>
-
-            <!-- MODULO 2: OPERATIVO ORDINI & LOGISTICA -->
-            <div class="flex flex-col gap-1.5 bg-slate-900/80 p-2 rounded-lg border border-slate-700/80 shadow-sm">
-                <div class="flex items-center gap-1.5 px-2 py-1 bg-emerald-950/60 rounded border border-emerald-800/50 mb-1">
-                    <i data-lucide="truck" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Modulo Ordini</span>
-                </div>
-                <button id="btn-tab-registro" onclick="switchTab('tab-registro')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> Registro Ordini
-                </button>
-                <button id="btn-tab-scadenzario" onclick="switchTab('tab-scadenzario')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="calendar-clock" class="w-3.5 h-3.5"></i> Scadenzario
-                </button>
-            </div>
-
-            <!-- MODULO 3: GESTIONE OFFERTE -->
-            <div class="flex flex-col gap-1.5 bg-slate-900/80 p-2 rounded-lg border border-purple-700/80 shadow-sm">
-                <div class="flex items-center gap-1.5 px-2 py-1 bg-purple-950/60 rounded border border-purple-800/50 mb-1">
-                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-purple-400"></i>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-300">Modulo Offerte</span>
-                </div>
-                <button id="btn-tab-nuova-offerta" onclick="switchTab('tab-nuova-offerta')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="file-plus" class="w-3.5 h-3.5 text-purple-400"></i> Nuova Richiesta Offerta
-                </button>
-                <button id="btn-tab-registro-offerte" onclick="switchTab('tab-registro-offerte')" class="tab-btn w-full text-left bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded text-xs font-semibold flex items-center gap-2 transition">
-                    <i data-lucide="list" class="w-3.5 h-3.5 text-purple-400"></i> Registro Offerte
-                </button>
-            </div>
-
-        </nav>
-
-        <!-- Main Container Principale -->
-        <main class="flex-1 w-full p-3 flex flex-col min-h-0 overflow-y-auto print-full-width">
-
-            <!-- ==================== TAB 1: ANALYTICS ACQUISTI ==================== -->
-            <div id="tab-dashboard" class="tab-content flex flex-col gap-3 h-full">
-                
-                <div class="card p-3 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-center gap-2 flex-none">
-                    <div class="flex items-center gap-2">
-                        <div class="p-1.5 bg-blue-600 rounded-lg"><i data-lucide="database" class="w-4 h-4 text-white"></i></div>
-                        <div>
-                            <h3 class="font-bold text-xs">Database Storico Gestionale</h3>
-                            <p class="text-[10px] text-slate-400">Importa o aggiorna il file Excel (.xlsx) per ricalcolare l'Analytics della spesa.</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="exportTableToExcel('tableBody', 'Analytics_Storico_Articoli')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1.5 rounded-lg transition text-xs flex items-center gap-1 shadow">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                        <label for="excelFile" class="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1.5 rounded-lg cursor-pointer transition text-xs shadow">
-                            <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-                            <span>Carica DB (.xlsx)</span>
-                            <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden">
-                        </label>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 flex-none">
-                    <div class="card p-3 flex items-center gap-3 border-l-4 border-blue-500">
-                        <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="euro" class="w-5 h-5"></i></div>
-                        <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Spesa Totale Netta</p>
-                            <h3 id="kpiTotalSpend" class="text-lg font-bold text-slate-800">€ 0.00</h3>
-                        </div>
-                    </div>
-                    <div class="card p-3 flex items-center gap-3 border-l-4 border-emerald-500">
-                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="package" class="w-5 h-5"></i></div>
-                        <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quantità Totale</p>
-                            <h3 id="kpiTotalQty" class="text-lg font-bold text-slate-800">0</h3>
-                        </div>
-                    </div>
-                    <div class="card p-3 flex items-center gap-3 border-l-4 border-amber-500">
-                        <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="boxes" class="w-5 h-5"></i></div>
-                        <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Articoli Distinti</p>
-                            <h3 id="kpiUniqueItems" class="text-lg font-bold text-slate-800">0</h3>
-                        </div>
-                    </div>
-                    <div class="card p-3 flex items-center gap-3 border-l-4 border-purple-500">
-                        <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="building-2" class="w-5 h-5"></i></div>
-                        <div>
-                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fornitori Coinvolti</p>
-                            <h3 id="kpiUniqueVendors" class="text-lg font-bold text-slate-800">0</h3>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card p-2.5 flex flex-wrap gap-3 items-center justify-between bg-slate-50 flex-none text-xs">
-                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                        <span class="font-semibold text-slate-600 flex items-center gap-1"><i data-lucide="filter" class="w-3.5 h-3.5"></i> Filtri Globali:</span>
-                        <select id="filterVendor" class="bg-white border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 outline-none"><option value="ALL">Tutti i Fornitori</option></select>
-                        <select id="filterYear" class="bg-white border border-slate-300 rounded px-2 py-1 text-xs focus:ring-2 focus:ring-blue-500 outline-none"><option value="ALL">Tutti gli Anni</option></select>
-                    </div>
-                    <div class="text-[11px] text-slate-500" id="recordCountInfo">Righe caricate: 0</div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-none" style="height: 180px;">
-                    <div class="card p-3 flex flex-col h-full">
-                        <h3 class="font-bold text-slate-700 text-xs mb-1 flex items-center gap-1.5"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-blue-600"></i> Top 10 Articoli per Spesa Totale (€)</h3>
-                        <div class="relative flex-1 min-h-0"><canvas id="chartTopItems"></canvas></div>
-                    </div>
-                    <div class="card p-3 flex flex-col h-full">
-                        <h3 class="font-bold text-slate-700 text-xs mb-1 flex items-center gap-1.5"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-600"></i> Andamento Spesa Mensile (€)</h3>
-                        <div class="relative flex-1 min-h-0"><canvas id="chartMonthlySpend"></canvas></div>
-                    </div>
-                </div>
-
-                <!-- TABELLA 1: RIEPILOGO DETTAGLIATO STORICO ARTICOLI -->
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <h3 class="font-bold text-slate-700 text-xs mb-2 flex items-center gap-2 flex-none"><i data-lucide="table" class="w-4 h-4 text-purple-600"></i> Riepilogo Dettagliato Storico Articoli</h3>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2">Codice Articolo <input type="text" class="col-filter" oninput="filterTable('tableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Descrizione Articolo <input type="text" class="col-filter" oninput="filterTable('tableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Prezzo Unit. Medio (€) <input type="text" class="col-filter" oninput="filterTable('tableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Quantità Totale <input type="text" class="col-filter" oninput="filterTable('tableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">UM <input type="text" class="col-filter" oninput="filterTable('tableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Importo Netto Totale (€) <input type="text" class="col-filter" oninput="filterTable('tableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 2: COMPARAZIONE LISTINI ==================== -->
-            <div id="tab-comparison" class="tab-content hidden flex flex-col gap-3 h-full">
-                <div class="card p-3 bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-3 flex-none">
-                    <div class="flex flex-col gap-1">
-                        <div class="flex items-center gap-2 text-blue-400 font-semibold text-xs"><i data-lucide="file-spreadsheets" class="w-4 h-4"></i><span>Gestione Listino Fornitore Secondario / Concorrente</span></div>
-                        <h3 class="text-sm font-bold">Importa Listino Offerta per la Comparazione</h3>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="exportTableToExcel('cmpTableBody', 'Confronto_Listini')" class="bg-emerald-600 hover:bg-emerald-700 text-slate-100 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition font-medium">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                        <button onclick="downloadPricelistTemplate()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition font-medium border border-slate-600">
-                            <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-blue-400"></i> Scarica Template
-                        </button>
-                        <label for="secondaryExcelFile" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3 py-1.5 rounded-lg cursor-pointer flex items-center justify-center gap-1.5 transition text-xs shadow"><i data-lucide="upload-cloud" class="w-3.5 h-3.5"></i><span>Importa Listino Offerta</span><input type="file" id="secondaryExcelFile" accept=".xlsx, .xls" class="hidden"></label>
-                    </div>
-                </div>
-
-                <div id="secondaryStatusCard" class="card p-2.5 bg-emerald-50 border-emerald-200 hidden flex justify-between items-center gap-2 flex-none">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
-                        <p id="secondaryStatusInfo" class="text-xs font-bold text-emerald-900">Listino Offerta Caricato</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs font-semibold text-slate-600">Nome Fornitore Secondario:</span>
-                        <input type="text" id="secondaryVendorName" value="Fornitore B (Nuovo)" oninput="renderComparisonTab(); renderForecastTab(); renderReportsTab();" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs text-slate-800 outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 flex-none">
-                    <div class="card p-3 border-l-4 border-indigo-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Articoli Confrontati</p><h3 id="cmpKpiMatched" class="text-base font-bold text-slate-800">0 / 0</h3></div>
-                    <div class="card p-3 border-l-4 border-emerald-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Convenienti Nuovo Fornitore</p><h3 id="cmpKpiCheaperCount" class="text-base font-bold text-emerald-600">0</h3></div>
-                    <div class="card p-3 border-l-4 border-emerald-600"><p class="text-[10px] font-semibold text-slate-400 uppercase">Risparmio Storico Calcolato</p><h3 id="cmpKpiTotalSavings" class="text-base font-bold text-emerald-600">€ 0.00</h3></div>
-                    <div class="card p-3 border-l-4 border-blue-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Risparmio Medio %</p><h3 id="cmpKpiPctSavings" class="text-base font-bold text-blue-600">0.0 %</h3></div>
-                </div>
-
-                <!-- TABELLA 2: DETTAGLIO COMPARATIVO PREZZI -->
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <h3 class="font-bold text-slate-700 text-xs mb-2 flex items-center gap-2 flex-none"><i data-lucide="arrow-right-left" class="w-4 h-4 text-indigo-600"></i> Dettaglio Comparativo Prezzi</h3>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2">Codice <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Descrizione <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Qtà Storica <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Prezzo Attuale (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Prezzo Offerta (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Delta Unitario (€ e %) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Delta Totale (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Esito / Convenienza <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 7, this.value)" placeholder="Filtra..."></th>
-                                </tr>
-                            </thead>
-                            <tbody id="cmpTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 3: PROSPECT & FORECAST ==================== -->
-            <div id="tab-forecast" class="tab-content hidden flex flex-col gap-3 h-full overflow-y-auto">
-                <div class="card p-3 bg-slate-50 flex flex-wrap gap-3 items-center justify-between border-blue-200 border flex-none">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-xs flex items-center gap-1.5"><i data-lucide="sliders" class="w-3.5 h-3.5 text-blue-600"></i> Parametri Proiezione Forecast</h3>
-                        <p class="text-[10px] text-slate-500">Algoritmo di stima consumi e spesa per i mesi rimanenti dell'anno.</p>
-                    </div>
-                    <div class="flex items-center gap-3 text-xs">
-                        <button onclick="exportTableToExcel('fctTableBody', 'Forecast_Piano_Acquisti')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded text-xs flex items-center gap-1 shadow">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                        <div class="flex items-center gap-1.5">
-                            <label for="forecastYearSelect" class="font-semibold text-slate-600">Anno Target:</label>
-                            <select id="forecastYearSelect" onchange="renderForecastTab()" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs outline-none"></select>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <label for="elapsedMonthsInput" class="font-semibold text-slate-600">Mesi Trascorsi:</label>
-                            <input type="number" id="elapsedMonthsInput" min="1" max="11" value="8" onchange="renderForecastTab()" class="w-12 bg-white border border-slate-300 rounded px-1.5 py-0.5 text-xs text-center font-bold text-blue-600 outline-none">
-                            <span class="text-slate-500">(Rimanenti: <strong id="remainingMonthsLabel" class="text-slate-800">4</strong>)</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 flex-none">
-                    <div class="card p-3 border-l-4 border-slate-500">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Spesa Proiettata (Attuale)</p>
-                        <h3 id="fctCurrentTotal" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                    <div class="card p-3 border-l-4 border-emerald-500">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Spesa Proiettata (100% Nuovo)</p>
-                        <h3 id="fctSecondaryTotal" class="text-base font-bold text-emerald-600">€ 0.00</h3>
-                    </div>
-                    <div class="card p-3 border-l-4 border-blue-600 bg-blue-50/40">
-                        <p class="text-[10px] font-semibold text-blue-600 uppercase">Strategia Ottimale (Best Price)</p>
-                        <h3 id="fctOptimalTotal" class="text-base font-bold text-blue-900">€ 0.00</h3>
-                    </div>
-                </div>
-
-                <div class="card p-3 flex flex-col flex-none" style="height: 180px;">
-                    <h3 class="font-bold text-slate-700 text-xs mb-1 flex items-center gap-1.5"><i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-emerald-600"></i> Proiezione Spesa Totale Fine Anno (€)</h3>
-                    <div class="relative flex-1 min-h-0"><canvas id="chartForecast"></canvas></div>
-                </div>
-
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <h3 class="font-bold text-slate-700 text-xs mb-2 flex items-center gap-2 flex-none"><i data-lucide="check-square" class="w-4 h-4 text-blue-600"></i> Piano d'Acquisto Consigliato Articolo per Articolo</h3>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2">Codice <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Descrizione <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Consumo Mensile <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Fabbisogno Rimanente <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Spesa Attuale (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Spesa Nuovo (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Risparmio (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Raccomandazione <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 7, this.value)" placeholder="Filtra..."></th>
-                                </tr>
-                            </thead>
-                            <tbody id="fctTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 4: ANALISI ABC & STORICO PREZZI ==================== -->
-            <div id="tab-abc" class="tab-content hidden flex flex-col gap-3 h-full">
-                <div class="grid grid-cols-3 gap-3 flex-none">
-                    <div class="card p-3 border-l-4 border-rose-500 bg-rose-50/30">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="text-[10px] font-bold text-rose-700 uppercase">Classe A (80% Spesa)</span>
-                            <span class="text-[10px] font-extrabold bg-rose-200 text-rose-800 px-1.5 py-0.5 rounded-full" id="abcClassACount">0 art.</span>
-                        </div>
-                        <h3 id="abcClassASpend" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                    <div class="card p-3 border-l-4 border-amber-500 bg-amber-50/30">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="text-[10px] font-bold text-amber-700 uppercase">Classe B (15% Spesa)</span>
-                            <span class="text-[10px] font-extrabold bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded-full" id="abcClassBCount">0 art.</span>
-                        </div>
-                        <h3 id="abcClassBSpend" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                    <div class="card p-3 border-l-4 border-slate-400 bg-slate-50">
-                        <div class="flex justify-between items-center mb-0.5">
-                            <span class="text-[10px] font-bold text-slate-600 uppercase">Classe C (5% Spesa)</span>
-                            <span class="text-[10px] font-extrabold bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded-full" id="abcClassCCount">0 art.</span>
-                        </div>
-                        <h3 id="abcClassCSpend" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                </div>
-
-                <div class="card p-3 flex flex-col flex-none" style="height: 180px;">
-                    <div class="flex justify-between items-center mb-1">
-                        <h3 class="font-bold text-slate-800 text-xs flex items-center gap-1.5"><i data-lucide="line-chart" class="w-3.5 h-3.5 text-blue-600"></i> Storico ed Evoluzione Prezzo Unitario</h3>
-                        <select id="itemPriceHistorySelect" onchange="renderPriceHistoryChart()" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs text-slate-800 w-64 outline-none"></select>
-                    </div>
-                    <div class="relative flex-1 min-h-0"><canvas id="chartPriceHistory"></canvas></div>
-                </div>
-
-                <!-- TABELLA 3: CLASSIFICAZIONE PARETO ABC ARTICOLI -->
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <div class="flex justify-between items-center mb-2 flex-none">
-                        <h3 class="font-bold text-slate-700 text-xs flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-indigo-600"></i> Classificazione Pareto ABC Articoli</h3>
-                        <button onclick="exportTableToExcel('abcTableBody', 'Analisi_Pareto_ABC')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded text-xs flex items-center gap-1 shadow">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                    </div>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2 text-center">Classe <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Codice Articolo <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Descrizione <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Spesa Totale (€) <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">% Cumulata <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Quantità Totale <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Prezzo Unit. Medio (€) <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                </tr>
-                            </thead>
-                            <tbody id="abcTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 5: REGISTRO OPERATIVO ORDINI ==================== -->
-            <div id="tab-registro" class="tab-content hidden flex flex-col gap-3 h-full">
-                
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 flex-none">
-                    <div class="card p-2.5 border-l-4 border-slate-700">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Ordini</p>
-                        <h3 id="stat-ord-count" class="text-base font-bold text-slate-800">0</h3>
-                    </div>
-                    <div class="card p-2.5 border-l-4 border-rose-500">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">In Ritardo Critico</p>
-                        <h3 id="stat-ord-delayed" class="text-base font-bold text-rose-600">0</h3>
-                    </div>
-                    <div class="card p-2.5 border-l-4 border-blue-500">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Imponibile Merci</p>
-                        <h3 id="stat-ord-subtotal" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                    <div class="card p-2.5 border-l-4 border-amber-500">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Trasporto</p>
-                        <h3 id="stat-ord-transport" class="text-base font-bold text-slate-800">€ 0.00</h3>
-                    </div>
-                    <div class="card p-2.5 border-l-4 border-emerald-500 bg-emerald-50/20">
-                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Ordini Netto</p>
-                        <h3 id="stat-ord-total" class="text-base font-bold text-emerald-700">€ 0.00</h3>
-                    </div>
-                </div>
-
-                <div class="card p-3 flex-none">
-                    <div class="flex justify-between items-center mb-2 pb-1 border-b border-slate-100">
-                        <h3 id="formTitle" class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
-                            <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-blue-600"></i> Gestione Registro Ordini
-                        </h3>
-                        <div class="flex items-center gap-2">
-                            <button onclick="downloadOrdersTemplate()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-[11px] px-2.5 py-1 rounded flex items-center gap-1 transition font-medium">
-                                <i data-lucide="file-spreadsheet" class="w-3 h-3 text-emerald-400"></i> Template Ordini
-                            </button>
-                            <label for="importOrdersExcel" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-2.5 py-1 rounded text-[11px] flex items-center gap-1 cursor-pointer transition shadow">
-                                <i data-lucide="upload" class="w-3 h-3"></i> Importa Excel
-                                <input type="file" id="importOrdersExcel" accept=".xlsx, .xls" class="hidden" onchange="importOrdersFromExcel(this)">
-                            </label>
-                            <button onclick="exportOrdersToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded text-[11px] flex items-center gap-1 transition shadow">
-                                <i data-lucide="download" class="w-3 h-3"></i> Esporta Excel
-                            </button>
-                        </div>
-                    </div>
-
-                    <form id="orderForm" onsubmit="addOrder(event)">
-                        <input type="hidden" id="editOrderIndex" value="-1">
-                        
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 text-xs mb-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">RDA (3Z)</label>
-                                <input type="text" id="codeRDA" placeholder="3Z-12345" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">ODA (3A)</label>
-                                <input type="text" id="codeODA" placeholder="3A-67890" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">DDT (4A)</label>
-                                <input type="text" id="codeDDT" placeholder="4A-99812" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Fornitore</label>
-                                <input type="text" id="supplier" required placeholder="Ragione Sociale" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Reparto</label>
-                                <input type="text" id="department" placeholder="Produzione" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Referente</label>
-                                <input type="text" id="contactPerson" placeholder="Ing. Rossi" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Data Ordine</label>
-                                <input type="date" id="orderDate" required class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Data Consegna</label>
-                                <input type="date" id="deliveryDate" required class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Tolleranza (GG)</label>
-                                <input type="number" id="maxDelayDays" min="0" value="0" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Trasporto (€)</label>
-                                <input type="number" id="transportCost" step="0.01" min="0" value="0.00" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                        </div>
-
-                        <!-- Sezione Multi-Articolo dell'Ordine -->
-                        <div class="border-t border-slate-200 pt-2 mb-3">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[11px] font-bold text-slate-700">Articoli Inclusi nell'Ordine:</span>
-                                <button type="button" onclick="addOrderItemRow()" class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-[10px] font-semibold px-2 py-0.5 rounded flex items-center gap-1 transition">
-                                    <i data-lucide="plus" class="w-3 h-3"></i> Aggiungi Articolo
-                                </button>
-                            </div>
-                            <div class="overflow-x-auto border border-slate-200 rounded">
-                                <table class="w-full text-xs text-left">
-                                    <thead class="bg-slate-100 uppercase text-[9px] text-slate-600 border-b border-slate-200">
-                                        <tr>
-                                            <th class="py-1 px-2">Descrizione Articolo</th>
-                                            <th class="py-1 px-2 text-right w-20">Q.tà</th>
-                                            <th class="py-1 px-2 text-right w-24">Prezzo Unit. (€)</th>
-                                            <th class="py-1 px-2 text-right w-28">Totale (€)</th>
-                                            <th class="py-1 px-2 text-center w-12">Azione</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="orderItemsTableBody" class="divide-y divide-slate-100"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end gap-2">
-                            <button type="button" id="cancelEditBtn" onclick="resetOrderForm()" class="hidden bg-slate-500 hover:bg-slate-600 text-white font-semibold px-3 py-1 rounded text-xs transition">Annulla</button>
-                            <button type="submit" id="submitOrderBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1 rounded text-xs flex items-center gap-1 transition shadow"><i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Ordine</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- TABELLA 4: REGISTRO ORDINI -->
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <div class="flex justify-between items-center mb-2 flex-none">
-                        <h3 class="font-bold text-slate-700 text-xs">Registro Ordini</h3>
-                        <select id="archiveFilter" onchange="renderOrdersTable()" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs outline-none">
-                            <option value="active">Solo Ordini Attivi</option>
-                            <option value="all">Tutti (Attivi + Conclusi)</option>
-                            <option value="archived">Solo Conclusi / Archiviati</option>
-                        </select>
-                    </div>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2 text-center">Riferimenti <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Fornitore <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Reparto / Ref. <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Articoli<input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Ordine / Consegna <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Tol. <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Trasporto (€) <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-right">Totale Netto (€) <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 7, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Avanzamento <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 8, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Stato <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 9, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ordersTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 6: SCADENZARIO CONSEGNE ==================== -->
-            <div id="tab-scadenzario" class="tab-content hidden flex flex-col gap-3 h-full">
-                <!-- TABELLA 5: SCADENZARIO CRONOLOGICO CONSEGNE MERCI -->
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <div class="mb-2 flex justify-between items-center flex-none">
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-xs flex items-center gap-1.5"><i data-lucide="calendar-clock" class="w-4 h-4 text-blue-600"></i> Scadenzario Consegne </h3>
-                            <p class="text-[10px] text-slate-500">Priorità d'arrivo ordinate per urgenza di consegna e tolleranza ritardo.</p>
-                        </div>
-                        <button onclick="exportTableToExcel('scheduleTableBody', 'Scadenzario_Consegne')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded text-xs flex items-center gap-1 shadow">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                    </div>
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2 text-center">Termine Consegna <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Priorità / Urgenza <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Fornitore <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Articoli Inclusi <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Riferimenti <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Referente <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Stato Operativo <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Azione Rapida</th>
-                                </tr>
-                            </thead>
-                            <tbody id="scheduleTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB 7: REPORT & DOSSIER DIREZIONALE AUTOMATICO ==================== -->
-            <div id="tab-reports" class="tab-content hidden flex flex-col gap-3 h-full overflow-y-auto">
-                <div class="card p-3 bg-slate-900 text-white flex justify-between items-center gap-3 no-print flex-none">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="printer" class="w-4 h-4 text-white"></i>
-                        <div>
-                            <h3 class="font-bold text-xs">Generatore Dossier Direzionale Negoziazione</h3>
-                            <p class="text-[10px] text-slate-400">Esporta o stampa in PDF il report aggiornato per le trattative commerciali.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="exportTableToExcel('repDynamicContent', 'Dossier_Direzionale_Summary')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded text-xs flex items-center gap-1.5 transition shadow">
-                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
-                        </button>
-                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded text-xs flex items-center gap-1.5 transition shadow">
-                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Stampa / PDF
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Executive Report Dinamico -->
-                <div class="card p-5 flex flex-col gap-4 border-2 border-slate-200 print-full-width">
-                    <div class="flex justify-between items-start border-b border-slate-200 pb-2">
-                        <div>
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600">HUB ACQUISTI</span>
-                            <h2 class="text-lg font-black text-slate-900 mt-0.5">Dossier Sintetico Analisi Acquisti & Forecast</h2>
-                        </div>
-                        <div class="text-right text-[11px] text-slate-500">
-                            <p>Data Generazione: <strong id="repCurrentDate" class="text-slate-800">--/--/----</strong></p>
-                            <p>Fornitore Principale: <strong id="repMainVendorName" class="text-blue-700">N/D</strong></p>
-                            <p>Fornitore Secondario: <strong id="repVendorName" class="text-emerald-700">N/D</strong></p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs">
-                        <div>
-                            <p class="text-slate-500 font-medium text-[11px]">Spesa Anno Proiettata (Fornitore Attuale):</p>
-                            <p id="repExecCurrentSpend" class="text-base font-bold text-slate-800">€ 0.00</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 font-medium text-[11px]">Spesa Proiettata (Mix Ottimale):</p>
-                            <p id="repExecOptimalSpend" class="text-base font-bold text-blue-700">€ 0.00</p>
-                        </div>
-                        <div>
-                            <p class="text-slate-500 font-medium text-[11px]">Risparmio Max Calcolato:</p>
-                            <p id="repExecOptSavings" class="text-base font-bold text-emerald-600">€ 0.00</p>
-                        </div>
-                    </div>
-
-                    <div class="border-t border-slate-200 pt-3">
-                        <h3 class="font-bold text-slate-800 text-xs mb-2">Sintesi Strategica & Opportunità di Negoziazione</h3>
-                        <div id="repDynamicContent" class="text-xs text-slate-600 space-y-2">
-                            <p class="italic text-slate-400">Carica i file del Database Storico e del Listino Offerta per generare automaticamente l'analisi di negoziazione.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== TAB INTEGRATI: MODULO OFFERTE ==================== -->
-
-            <!-- TAB 8: NUOVA RICHIESTA OFFERTA / RDO -->
-            <div id="tab-nuova-offerta" class="tab-content hidden flex flex-col gap-3 h-full overflow-y-auto">
-                <div class="card p-3 flex-none bg-purple-950 text-white flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="file-plus" class="w-5 h-5 text-purple-400"></i>
-                        <div>
-                            <h3 id="offerFormTitle" class="font-bold text-xs uppercase">Nuova Richiesta Offerta / RDO</h3>
-                            <p class="text-[10px] text-purple-200">Inserisci i dati per generare una Richiesta di Offerta.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card p-4 flex-none">
-                    <form id="offerForm" onsubmit="addOrUpdateOffer(event)">
-                        <input type="hidden" id="editOfferIndex" value="-1">
-                        
-                        <!-- Campi RDA / Richiesta Acquisto interna & Dati Fornitore -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3 text-xs mb-3">
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Riferimento RdA</label>
-                                <input type="text" id="internalRdaCode" required placeholder="Es. RDA-2026-088" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none font-semibold text-slate-700">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Reparto Richiedente</label>
-                                <input type="text" id="internalCostCenter" placeholder="Es. Produzione / Manutenzione" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Richiedente</label>
-                                <input type="text" id="internalRequester" placeholder="Es. Mario Rossi" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Data Emissione RdA</label>
-                                <input type="date" id="internalRdaDate" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 text-xs mb-4 pt-2 border-t border-slate-100">
-                            
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Fornitore</label>
-                                <input type="text" id="offerCustomer" required placeholder="Nome / Ragione Sociale Fornitore" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Referente Fornitore</label>
-                                <input type="text" id="offerContact" placeholder="Es. Ing. Verdi (Commerciale)" class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Data Consegna Richiesta</label>
-                                <input type="date" id="offerDeliveryDate" required class="w-full bg-white border border-slate-300 rounded px-2 py-1 outline-none">
-                            </div>
-                         
-                        </div>
-
-                        <!-- Campo Note Generali -->
-                        <div class="mb-4">
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-0.5">Note Generali</label>
-                            <textarea id="offerNotes" rows="2" placeholder="Inserisci eventuali note o condizioni generali della richiesta..." class="w-full bg-white border border-slate-300 rounded px-2 py-1 text-xs outline-none resize-none"></textarea>
-                        </div>
-
-                        <!-- Inserimento Articoli Offerta/RDA Multi-Articolo con Quantità a Compilazione Libera -->
-                        <div class="border-t border-slate-200 pt-3 mb-3">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-xs text-slate-700 flex items-center gap-1"><i data-lucide="package-plus" class="w-3.5 h-3.5 text-purple-600"></i> Dettaglio Articoli Richiesti (Quantità a Compilazione Libera)</h4>
-                                <button type="button" onclick="addOfferItemRow()" class="bg-purple-100 hover:bg-purple-200 text-purple-800 text-[11px] font-semibold px-2 py-0.5 rounded flex items-center gap-1 transition">
-                                    <i data-lucide="plus" class="w-3 h-3"></i> Aggiungi Articolo
-                                </button>
-                            </div>
-
-                            <div class="overflow-x-auto border border-slate-200 rounded">
-                                <table class="w-full text-xs text-left">
-                                    <thead class="bg-slate-100 uppercase text-[10px] text-slate-600 border-b border-slate-200">
-                                        <tr>
-                                            <th class="py-1.5 px-2">Descrizione Articolo</th>
-                                            <th class="py-1.5 px-2 text-right w-44">Q.tà (Libera)</th>
-                                            <th class="py-1.5 px-2 text-center w-16">Azione</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="offerItemsTableBody" class="divide-y divide-slate-100"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col gap-3">
-                            <div class="flex justify-end items-center bg-purple-50 p-3 rounded-lg border border-purple-200">
-                                <div class="flex gap-2">
-                                    <button type="button" onclick="generateOfferEmail()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3 py-1.5 rounded text-xs flex items-center gap-1 transition shadow">
-                                        <i data-lucide="mail" class="w-3.5 h-3.5"></i> Genera Email Richiesta Offerta
-                                    </button>
-                                    <button type="button" id="cancelOfferEditBtn" onclick="resetOfferForm()" class="hidden bg-slate-500 hover:bg-slate-600 text-white font-semibold px-3 py-1.5 rounded text-xs transition">Annulla</button>
-                                    <button type="submit" id="submitOfferBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-1.5 rounded text-xs flex items-center gap-1.5 transition shadow">
-                                        <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Documento
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Anteprima Email -->
-                            <div id="emailPreviewContainer" class="hidden card p-3 bg-slate-50 border border-slate-300">
-                                <div class="flex justify-between items-center mb-2">
-                                    <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
-                                        <i data-lucide="mail-check" class="w-4 h-4 text-amber-600"></i> Anteprima Email
-                                    </span>
-                                    <button type="button" onclick="copyEmailText()" class="bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-semibold px-2.5 py-1 rounded flex items-center gap-1 transition">
-                                        <i data-lucide="copy" class="w-3 h-3"></i> Copia Testo
-                                    </button>
-                                </div>
-                                <textarea id="emailPreviewText" rows="6" readonly class="w-full bg-white border border-slate-300 rounded p-2 text-xs font-mono text-slate-700 outline-none resize-none"></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- TAB 9: REGISTRO OFFERTE -->
-            <div id="tab-registro-offerte" class="tab-content hidden flex flex-col gap-3 h-full">
-                <div class="card p-3 flex flex-col flex-1 min-h-0">
-                    <div class="flex justify-between items-center mb-2 flex-none">
-                        <div class="flex items-center gap-2">
-                            <i data-lucide="list" class="w-4 h-4 text-purple-600"></i>
-                            <h3 class="font-bold text-slate-800 text-xs">Registro Offerte</h3>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <select id="offerArchiveFilter" onchange="renderOffersTable()" class="bg-white border border-slate-300 rounded px-2 py-0.5 text-xs outline-none">
-                                <option value="NO">Mostra solo Offerte Attive</option>
-                                <option value="SI">Mostra Offerte Archiviate</option>
-                                <option value="ALL">Tutte (Attive e Archiviate)</option>
-                            </select>
-                            <button onclick="exportOffersToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded text-[11px] flex items-center gap-1 transition shadow">
-                                <i data-lucide="download" class="w-3 h-3"></i> Esporta Excel
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-200 rounded-lg">
-                        <table class="w-full text-xs text-left text-slate-600 adaptable-table">
-                            <thead class="text-[11px] text-slate-700 uppercase bg-slate-100 sticky top-0 z-10 border-b border-slate-200">
-                                <tr>
-                                    <th class="py-2 px-2 text-center">Codice <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 0, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">RdI / Fornitore <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 1, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Cliente / Fornitore <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 2, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Emissione / Consegna <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 3, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2">Dettaglio Articoli <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 4, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 font-normal text-slate-600">Note <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 5, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Avanzamento / Esito <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 6, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Stato <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 7, this.value)" placeholder="Filtra..."></th>
-                                    <th class="py-2 px-2 text-center">Azioni</th>
-                                </tr>
-                            </thead>
-                            <tbody id="offersTableBody" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-        </main>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-1.5 text-center text-[10px] flex-none border-t border-slate-800 no-print z-20">
-        HUB ACQUISTI & MODULO OFFERTE &bull; Processing Locale Offline 100% Client-Side
-    </footer>
+    <script>
+        const modalOverlay = document.getElementById('modalOverlay');
+        const openModalBtn = document.getElementById('openModal');
+        const closeModalBtn = document.getElementById('closeModal');
 
-    <!-- Script JS Esterno -->
-    <script src="script.js"></script>
+        openModalBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlay.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>
