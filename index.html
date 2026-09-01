@@ -1,167 +1,2103 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" class="h-full w-full overflow-hidden">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piattaforma Glassmorphism</title>
+    <title>HUB ACQUISTI &bull; Executive Procurement Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (xlsx.full.min.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-          --bg-main: #F8F9FA;
-          --bg-gradient: radial-gradient(circle at 10% 20%, rgba(216, 241, 233, 0.4) 0%, rgba(235, 243, 255, 0.4) 90%);
-          --glass-bg: rgba(255, 255, 255, 0.65);
-          --glass-border: 1px solid rgba(255, 255, 255, 0.8);
-          --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-          --text-primary: #1E293B;
-          --text-secondary: #64748B;
-          --accent-color: #3B82F6;
-          --accent-glow: rgba(59, 130, 246, 0.15);
-          --radius-lg: 20px;
-          --radius-md: 12px;
-          --transition: all 0.3s ease;
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+        html, body { 
+            height: 100%; 
+            width: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background: #0f172a; 
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif; 
         }
 
-        body {
-          background-color: var(--bg-main);
-          background-image: var(--bg-gradient);
-          color: var(--text-primary);
-          font-family: system-ui, -apple-system, sans-serif;
-          min-height: 100vh;
-          margin: 0;
-          display: flex;
-        }
-
-        .sidebar {
-          width: 260px;
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-right: 1px solid rgba(255, 255, 255, 0.8);
-          padding: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .main-content {
-          flex: 1;
-          padding: 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-          box-sizing: border-box;
-        }
-
+        /* Glassmorphism & Modern UI Refinements */
         .glass-panel {
-          background: var(--glass-bg);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border: var(--glass-border);
-          box-shadow: var(--glass-shadow);
-          border-radius: var(--radius-lg);
-          padding: 24px;
-          transition: var(--transition);
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
         }
 
-        .glass-panel:hover {
-          box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.06);
+        .card { 
+            background: #1e293b; 
+            border-radius: 14px; 
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
+        .stage-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 6px;
+            background: #0f172a;
+            border: 1px solid #334155;
+            white-space: nowrap;
+            color: #94a3b8;
+            transition: all 0.15s ease;
+        }
+        .stage-item:hover { border-color: #3b82f6; color: #fff; }
+        .stage-item input[type="checkbox"] { cursor: pointer; width: 12px; height: 12px; accent-color: #3b82f6; }
+        .stage-item.completed { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399; font-weight: 600; }
+
+        .adaptable-table th, .adaptable-table td {
+            white-space: normal !important;
+            word-break: break-word;
         }
 
-        button, .btn-glass {
-          background: rgba(255, 255, 255, 0.6);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.9);
-          color: var(--text-primary);
-          border-radius: var(--radius-md);
-          padding: 10px 20px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: var(--transition);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        .col-filter {
+            width: 100%;
+            padding: 3px 6px;
+            font-size: 10px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            margin-top: 4px;
+            font-weight: normal;
+            color: #f8fafc;
+            background-color: #0f172a;
+            outline: none;
+            transition: border-color 0.15s;
         }
+        .col-filter:focus { border-color: #3b82f6; }
 
-        button:hover {
-          background: rgba(255, 255, 255, 0.85);
-          border-color: var(--accent-color);
-          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-          transform: translateY(-1px);
-        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        .modal-overlay {
-          background: rgba(30, 41, 59, 0.25);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          position: fixed;
-          inset: 0;
-          display: none;
-          align-items: center;
-          justify-content: center;
-        }
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; }
 
-        .modal-overlay.active {
-          display: flex;
-        }
-
-        .modal-content {
-          background: rgba(255, 255, 255, 0.85);
-          backdrop-filter: blur(24px);
-          border: var(--glass-border);
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-          border-radius: var(--radius-lg);
-          width: 100%;
-          max-width: 400px;
-          padding: 32px;
-          box-sizing: border-box;
+        @media print {
+            header, nav, .no-print, button, .modal-overlay, input, select { display: none !important; }
+            body { background-color: white !important; overflow: auto !important; color: black !important; }
+            .card { background: white !important; color: black !important; box-shadow: none !important; border: 1px solid #cbd5e1 !important; page-break-inside: avoid; }
+            .print-full-width { width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; }
         }
     </style>
 </head>
-<body>
+<body class="text-slate-100 antialiased h-screen w-screen flex flex-col overflow-hidden">
 
-    <aside class="sidebar">
-        <h3>Menu</h3>
-        <button onclick="alert('Navigazione attiva')">Dashboard</button>
-        <button onclick="alert('Navigazione attiva')">Utenti</button>
-        <button onclick="alert('Navigazione attiva')">Impostazioni</button>
-    </aside>
-
-    <main class="main-content">
-        <header class="glass-panel" style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;">
-            <h2 style="margin: 0;">Dashboard</h2>
-            <button id="openModal">Apri Modale</button>
-        </header>
-
-        <section class="glass-panel">
-            <h3>Panoramica</h3>
-            <p>Tutta la piattaforma è impostata con tema minimal, glass e chiaro.</p>
-        </section>
-    </main>
-
-    <div class="modal-overlay" id="modalOverlay">
-        <div class="modal-content">
-            <h3>Finestra Modale</h3>
-            <p>Questo è un esempio di modale con effetto glassmorphism.</p>
-            <button id="closeModal" style="margin-top: 16px;">Chiudi</button>
+    <!-- Header Principale / Navbar Superiore Reimmaginata -->
+    <header class="bg-slate-900/90 backdrop-blur-md py-2.5 px-6 shadow-xl border-b border-slate-800 flex-none z-20 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center">
+                <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+               <h1 class="text-base font-extrabold tracking-wider uppercase text-white leading-none">HUB ACQUISTI</h1>
+               <span class="text-[10px] font-semibold text-blue-400 tracking-widest uppercase">Executive Procurement Suite</span>
+            </div>
         </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700/60 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-slate-300 font-medium">Core Engine: <strong class="text-white">Online 100% Client-Side</strong></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout Principale: Sidebar + Workspace -->
+    <div class="flex-1 flex flex-row min-h-0 w-full overflow-hidden bg-slate-950">
+
+        <!-- Navigation Bar Laterale a Sinistra (Dark Tech Theme) -->
+        <nav class="bg-slate-900/9ental border-r border-slate-800/80 w-64 flex-none p-3.5 no-print shadow-2xl flex flex-col gap-4 overflow-y-auto">
+            
+            <!-- MODULO 1: ANALISI & STRATEGIA -->
+            <div class="flex flex-col gap-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 shadow-inner">
+                <div class="flex items-center gap-2 px-2 py-1 bg-blue-950/40 rounded-lg border border-blue-800/30 mb-1">
+                    <i data-lucide="line-chart" class="w-3.5 h-3.5 text-blue-400"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-blue-300">Modulo Analisi</span>
+                </div>
+                <button id="btn-tab-dashboard" onclick="switchTab('tab-dashboard')" class="tab-btn w-full text-left bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition shadow-lg shadow-blue-600/20">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Analisi Storica
+                </button>
+                <button id="btn-tab-comparison" onclick="switchTab('tab-comparison')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="scale" class="w-4 h-4 text-indigo-400"></i> Confronto Listini
+                </button>
+                <button id="btn-tab-forecast" onclick="switchTab('tab-forecast')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i> Forecast & Proiezioni
+                </button>
+                <button id="btn-tab-abc" onclick="switchTab('tab-abc')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="pie-chart" class="w-4 h-4 text-amber-400"></i> ABC & Prezzi
+                </button>
+                <button id="btn-tab-reports" onclick="switchTab('tab-reports')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="file-text" class="w-4 h-4 text-purple-400"></i> Dossier Direzionale
+                </button>
+            </div>
+
+            <!-- MODULO 2: OPERATIVO ORDINI & LOGISTICA -->
+            <div class="flex flex-col gap-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800/80 shadow-inner">
+                <div class="flex items-center gap-2 px-2 py-1 bg-emerald-950/40 rounded-lg border border-emerald-800/30 mb-1">
+                    <i data-lucide="truck" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-300">Modulo Ordini</span>
+                </div>
+                <button id="btn-tab-registro" onclick="switchTab('tab-registro')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-emerald-400"></i> Registro Ordini
+                </button>
+                <button id="btn-tab-scadenzario" onclick="switchTab('tab-scadenzario')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="calendar-clock" class="w-4 h-4 text-cyan-400"></i> Scadenzario Consegne
+                </button>
+            </div>
+
+            <!-- MODULO 3: GESTIONE OFFERTE -->
+            <div class="flex flex-col gap-1.5 bg-slate-900/60 p-2.5 rounded-xl border border-purple-900/40 shadow-inner">
+                <div class="flex items-center gap-2 px-2 py-1 bg-purple-950/40 rounded-lg border border-purple-800/30 mb-1">
+                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-purple-400"></i>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-300">Modulo Offerte</span>
+                </div>
+                <button id="btn-tab-nuova-offerta" onclick="switchTab('tab-nuova-offerta')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="file-plus" class="w-4 h-4 text-purple-400"></i> Nuova RdO
+                </button>
+                <button id="btn-tab-registro-offerte" onclick="switchTab('tab-registro-offerte')" class="tab-btn w-full text-left bg-slate-800/60 hover:bg-slate-800 text-slate-300 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-2.5 transition">
+                    <i data-lucide="list" class="w-4 h-4 text-pink-400"></i> Registro Offerte
+                </button>
+            </div>
+
+        </nav>
+
+        <!-- Main Workspace Container -->
+        <main class="flex-1 w-full p-4 flex flex-col min-h-0 overflow-y-auto print-full-width bg-slate-950">
+
+            <!-- ==================== TAB 1: ANALYTICS ACQUISTI ==================== -->
+            <div id="tab-dashboard" class="tab-content flex flex-col gap-3.5 h-full">
+                
+                <div class="card p-4 bg-gradient-to-r from-slate-900 to-blue-950 text-white flex flex-col sm:flex-row justify-between items-center gap-3 flex-none border border-blue-900/50">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-blue-600 rounded-xl shadow-lg shadow-blue-600/30"><i data-lucide="database" class="w-5 h-5 text-white"></i></div>
+                        <div>
+                            <h3 class="font-bold text-sm">Database Storico Gestionale</h3>
+                            <p class="text-[11px] text-slate-300">Importa o aggiorna il file Excel (.xlsx) per ricalcolare l'Analytics della spesa aziendale.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2.5">
+                        <button onclick="exportTableToExcel('tableBody', 'Analytics_Storico_Articoli')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-xl transition text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-600/20">
+                            <i data-lucide="download" class="w-4 h-4"></i> Esporta Excel
+                        </button>
+                        <label for="excelFile" class="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-2 rounded-xl cursor-pointer transition text-xs shadow-lg shadow-blue-600/20">
+                            <i data-lucide="upload" class="w-4 h-4"></i>
+                            <span>Carica DB (.xlsx)</span>
+                            <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 flex-none">
+                    <div class="card p-3.5 flex items-center gap-3.5 border-l-4 border-blue-500">
+                        <div class="p-2.5 bg-blue-500/10 text-blue-400 rounded-xl"><i data-lucide="euro" class="w-6 h-6"></i></div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Spesa Totale Netta</p>
+                            <h3 id="kpiTotalSpend" class="text-xl font-extrabold text-white">€ 0.00</h3>
+                        </div>
+                    </div>
+                    <div class="card p-3.5 flex items-center gap-3.5 border-l-4 border-emerald-500">
+                        <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl"><i data-lucide="package" class="w-6 h-6"></i></div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Quantità Totale</p>
+                            <h3 id="kpiTotalQty" class="text-xl font-extrabold text-white">0</h3>
+                        </div>
+                    </div>
+                    <div class="card p-3.5 flex items-center gap-3.5 border-l-4 border-amber-500">
+                        <div class="p-2.5 bg-amber-500/10 text-amber-400 rounded-xl"><i data-lucide="boxes" class="w-6 h-6"></i></div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Articoli Distinti</p>
+                            <h3 id="kpiUniqueItems" class="text-xl font-extrabold text-white">0</h3>
+                        </div>
+                    </div>
+                    <div class="card p-3.5 flex items-center gap-3.5 border-l-4 border-purple-500">
+                        <div class="p-2.5 bg-purple-500/10 text-purple-400 rounded-xl"><i data-lucide="building-2" class="w-6 h-6"></i></div>
+                        <div>
+                            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Fornitori Coinvolti</p>
+                            <h3 id="kpiUniqueVendors" class="text-xl font-extrabold text-white">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-3 flex flex-wrap gap-3 items-center justify-between bg-slate-900/60 flex-none text-xs border border-slate-800">
+                    <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                        <span class="font-semibold text-slate-300 flex items-center gap-1.5"><i data-lucide="filter" class="w-4 h-4 text-blue-400"></i> Filtri Globali:</span>
+                        <select id="filterVendor" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none"><option value="ALL">Tutti i Fornitori</option></select>
+                        <select id="filterYear" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none"><option value="ALL">Tutti gli Anni</option></select>
+                    </div>
+                    <div class="text-[11px] text-slate-400 font-mono" id="recordCountInfo">Righe caricate: 0</div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5 flex-none" style="height: 210px;">
+                    <div class="card p-3.5 flex flex-col h-full">
+                        <h3 class="font-bold text-slate-200 text-xs mb-2 flex items-center gap-2"><i data-lucide="bar-chart-3" class="w-4 h-4 text-blue-400"></i> Top 10 Articoli per Spesa Totale (€)</h3>
+                        <div class="relative flex-1 min-h-0"><canvas id="chartTopItems"></canvas></div>
+                    </div>
+                    <div class="card p-3.5 flex flex-col h-full">
+                        <h3 class="font-bold text-slate-200 text-xs mb-2 flex items-center gap-2"><i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i> Andamento Spesa Mensile (€)</h3>
+                        <div class="relative flex-1 min-h-0"><canvas id="chartMonthlySpend"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- TABELLA 1: RIEPILOGO DETTAGLIATO STORICO ARTICOLI -->
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <h3 class="font-bold text-slate-200 text-xs mb-2.5 flex items-center gap-2 flex-none"><i data-lucide="table" class="w-4 h-4 text-purple-400"></i> Riepilogo Dettagliato Storico Articoli</h3>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3">Codice Articolo <input type="text" class="col-filter" oninput="filterTable('tableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Descrizione Articolo <input type="text" class="col-filter" oninput="filterTable('tableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Prezzo Unit. Medio (€) <input type="text" class="col-filter" oninput="filterTable('tableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Quantità Totale <input type="text" class="col-filter" oninput="filterTable('tableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">UM <input type="text" class="col-filter" oninput="filterTable('tableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Importo Netto Totale (€) <input type="text" class="col-filter" oninput="filterTable('tableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 2: COMPARAZIONE LISTINI ==================== -->
+            <div id="tab-comparison" class="tab-content hidden flex flex-col gap-3.5 h-full">
+                <div class="card p-4 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex flex-col md:flex-row items-center justify-between gap-3 flex-none border border-indigo-900/40">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2 text-indigo-400 font-semibold text-xs"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i><span>Gestione Listino Fornitore Secondario / Concorrente</span></div>
+                        <h3 class="text-sm font-bold">Importa Listino Offerta per la Comparazione</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportTableToExcel('cmpTableBody', 'Confronto_Listini')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition font-medium shadow">
+                            <i data-lucide="download" class="w-4 h-4"></i> Esporta Excel
+                        </button>
+                        <button onclick="downloadPricelistTemplate()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition font-medium border border-slate-700">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4 text-blue-400"></i> Scarica Template
+                        </button>
+                        <label for="secondaryExcelFile" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-3.5 py-2 rounded-xl cursor-pointer flex items-center justify-center gap-1.5 transition text-xs shadow"><i data-lucide="upload-cloud" class="w-4 h-4"></i><span>Importa Listino Offerta</span><input type="file" id="secondaryExcelFile" accept=".xlsx, .xls" class="hidden"></label>
+                    </div>
+                </div>
+
+                <div id="secondaryStatusCard" class="card p-3 bg-emerald-950/40 border-emerald-800/60 hidden flex justify-between items-center gap-2 flex-none">
+                    <div class="flex items-center gap-2.5">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+                        <p id="secondaryStatusInfo" class="text-xs font-bold text-emerald-200">Listino Offerta Caricato</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-300">Nome Fornitore Secondario:</span>
+                        <input type="text" id="secondaryVendorName" value="Fornitore B (Nuovo)" oninput="renderComparisonTab(); renderForecastTab(); renderReportsTab();" class="bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1 text-xs outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 flex-none">
+                    <div class="card p-3.5 border-l-4 border-indigo-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Articoli Confrontati</p><h3 id="cmpKpiMatched" class="text-lg font-extrabold text-white">0 / 0</h3></div>
+                    <div class="card p-3.5 border-l-4 border-emerald-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Convenienti Nuovo Fornitore</p><h3 id="cmpKpiCheaperCount" class="text-lg font-extrabold text-emerald-400">0</h3></div>
+                    <div class="card p-3.5 border-l-4 border-emerald-600"><p class="text-[10px] font-semibold text-slate-400 uppercase">Risparmio Storico Calcolato</p><h3 id="cmpKpiTotalSavings" class="text-lg font-extrabold text-emerald-400">€ 0.00</h3></div>
+                    <div class="card p-3.5 border-l-4 border-blue-500"><p class="text-[10px] font-semibold text-slate-400 uppercase">Risparmio Medio %</p><h3 id="cmpKpiPctSavings" class="text-lg font-extrabold text-blue-400">0.0 %</h3></div>
+                </div>
+
+                <!-- TABELLA 2: DETTAGLIO COMPARATIVO PREZZI -->
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <h3 class="font-bold text-slate-200 text-xs mb-2.5 flex items-center gap-2 flex-none"><i data-lucide="arrow-right-left" class="w-4 h-4 text-indigo-400"></i> Dettaglio Comparativo Prezzi</h3>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3">Codice <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Descrizione <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Qtà Storica <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Prezzo Attuale (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Prezzo Offerta (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Delta Unitario (€ e %) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Delta Totale (€) <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Esito / Convenienza <input type="text" class="col-filter" oninput="filterTable('cmpTableBody', 7, this.value)" placeholder="Filtra..."></th>
+                                </tr>
+                            </thead>
+                            <tbody id="cmpTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 3: PROSPECT & FORECAST ==================== -->
+            <div id="tab-forecast" class="tab-content hidden flex flex-col gap-3.5 h-full overflow-y-auto">
+                <div class="card p-3.5 bg-slate-900 flex flex-wrap gap-3 items-center justify-between border-slate-800 flex-none">
+                    <div>
+                        <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 text-blue-400"></i> Parametri Proiezione Forecast</h3>
+                        <p class="text-[10px] text-slate-400">Algoritmo di stima consumi e spesa per i mesi rimanenti dell'anno.</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 text-xs">
+                        <button onclick="exportTableToExcel('fctTableBody', 'Forecast_Piano_Acquisti')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
+                        </button>
+                        <div class="flex items-center gap-1.5">
+                            <label for="forecastYearSelect" class="font-semibold text-slate-300">Anno Target:</label>
+                            <select id="forecastYearSelect" onchange="renderForecastTab()" class="bg-slate-950 border border-slate-700 text-white rounded-lg px-2 py-1 text-xs outline-none"></select>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <label for="elapsedMonthsInput" class="font-semibold text-slate-300">Mesi Trascorsi:</label>
+                            <input type="number" id="elapsedMonthsInput" min="1" max="11" value="8" onchange="renderForecastTab()" class="w-12 bg-slate-950 border border-slate-700 text-white rounded-lg px-1.5 py-1 text-xs text-center font-bold text-blue-400 outline-none">
+                            <span class="text-slate-400">(Rimanenti: <strong id="remainingMonthsLabel" class="text-white">4</strong>)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 flex-none">
+                    <div class="card p-3.5 border-l-4 border-slate-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Spesa Proiettata (Attuale)</p>
+                        <h3 id="fctCurrentTotal" class="text-lg font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3.5 border-l-4 border-emerald-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Spesa Proiettata (100% Nuovo)</p>
+                        <h3 id="fctSecondaryTotal" class="text-lg font-extrabold text-emerald-400">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3.5 border-l-4 border-blue-600 bg-blue-950/20">
+                        <p class="text-[10px] font-semibold text-blue-400 uppercase">Strategia Ottimale (Best Price)</p>
+                        <h3 id="fctOptimalTotal" class="text-lg font-extrabold text-blue-300">€ 0.00</h3>
+                    </div>
+                </div>
+
+                <div class="card p-3.5 flex flex-col flex-none" style="height: 200px;">
+                    <h3 class="font-bold text-slate-200 text-xs mb-2 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4 text-emerald-400"></i> Proiezione Spesa Totale Fine Anno (€)</h3>
+                    <div class="relative flex-1 min-h-0"><canvas id="chartForecast"></canvas></div>
+                </div>
+
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <h3 class="font-bold text-slate-200 text-xs mb-2.5 flex items-center gap-2 flex-none"><i data-lucide="check-square" class="w-4 h-4 text-blue-400"></i> Piano d'Acquisto Consigliato Articolo per Articolo</h3>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3">Codice <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Descrizione <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Consumo Mensile <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Fabbisogno Rimanente <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Spesa Attuale (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Spesa Nuovo (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Risparmio (€) <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Raccomandazione <input type="text" class="col-filter" oninput="filterTable('fctTableBody', 7, this.value)" placeholder="Filtra..."></th>
+                                </tr>
+                            </thead>
+                            <tbody id="fctTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 4: ANALISI ABC & STORICO PREZZI ==================== -->
+            <div id="tab-abc" class="tab-content hidden flex flex-col gap-3.5 h-full">
+                <div class="grid grid-cols-3 gap-3.5 flex-none">
+                    <div class="card p-3.5 border-l-4 border-rose-500 bg-rose-950/20">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-rose-400 uppercase">Classe A (80% Spesa)</span>
+                            <span class="text-[10px] font-extrabold bg-rose-900/60 text-rose-200 px-2 py-0.5 rounded-full border border-rose-700/50" id="abcClassACount">0 art.</span>
+                        </div>
+                        <h3 id="abcClassASpend" class="text-lg font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3.5 border-l-4 border-amber-500 bg-amber-950/20">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-amber-400 uppercase">Classe B (15% Spesa)</span>
+                            <span class="text-[10px] font-extrabold bg-amber-900/60 text-amber-200 px-2 py-0.5 rounded-full border border-amber-700/50" id="abcClassBCount">0 art.</span>
+                        </div>
+                        <h3 id="abcClassBSpend" class="text-lg font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3.5 border-l-4 border-slate-500 bg-slate-900/50">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Classe C (5% Spesa)</span>
+                            <span class="text-[10px] font-extrabold bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700" id="abcClassCCount">0 art.</span>
+                        </div>
+                        <h3 id="abcClassCSpend" class="text-lg font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                </div>
+
+                <div class="card p-3.5 flex flex-col flex-none" style="height: 200px;">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2"><i data-lucide="line-chart" class="w-4 h-4 text-blue-400"></i> Storico ed Evoluzione Prezzo Unitario</h3>
+                        <select id="itemPriceHistorySelect" onchange="renderPriceHistoryChart()" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1 text-xs w-72 outline-none"></select>
+                    </div>
+                    <div class="relative flex-1 min-h-0"><canvas id="chartPriceHistory"></canvas></div>
+                </div>
+
+                <!-- TABELLA 3: CLASSIFICAZIONE PARETO ABC ARTICOLI -->
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <div class="flex justify-between items-center mb-2.5 flex-none">
+                        <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 text-indigo-400"></i> Classificazione Pareto ABC Articoli</h3>
+                        <button onclick="exportTableToExcel('abcTableBody', 'Analisi_Pareto_ABC')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
+                        </button>
+                    </div>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 text-center">Classe <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Codice Articolo <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Descrizione <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Spesa Totale (€) <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">% Cumulata <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Quantità Totale <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Prezzo Unit. Medio (€) <input type="text" class="col-filter" oninput="filterTable('abcTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                </tr>
+                            </thead>
+                            <tbody id="abcTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 5: REGISTRO OPERATIVO ORDINI ==================== -->
+            <div id="tab-registro" class="tab-content hidden flex flex-col gap-3.5 h-full overflow-y-auto">
+                
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5 flex-none">
+                    <div class="card p-3 border-l-4 border-slate-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Ordini</p>
+                        <h3 id="stat-ord-count" class="text-base font-extrabold text-white">0</h3>
+                    </div>
+                    <div class="card p-3 border-l-4 border-rose-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">In Ritardo Critico</p>
+                        <h3 id="stat-ord-delayed" class="text-base font-extrabold text-rose-400">0</h3>
+                    </div>
+                    <div class="card p-3 border-l-4 border-blue-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Imponibile Merci</p>
+                        <h3 id="stat-ord-subtotal" class="text-base font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3 border-l-4 border-amber-500">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Trasporto</p>
+                        <h3 id="stat-ord-transport" class="text-base font-extrabold text-white">€ 0.00</h3>
+                    </div>
+                    <div class="card p-3 border-l-4 border-emerald-500 bg-emerald-950/20">
+                        <p class="text-[10px] font-semibold text-slate-400 uppercase">Totale Ordini Netto</p>
+                        <h3 id="stat-ord-total" class="text-base font-extrabold text-emerald-400">€ 0.00</h3>
+                    </div>
+                </div>
+
+                <div class="card p-4 flex-none">
+                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                        <h3 id="formTitle" class="font-bold text-slate-200 text-xs flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4 h-4 text-blue-400"></i> Gestione Registro Ordini
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <button onclick="downloadOrdersTemplate()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition font-medium border border-slate-700">
+                                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-emerald-400"></i> Template Ordini
+                            </button>
+                            <label for="importOrdersExcel" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer transition shadow">
+                                <i data-lucide="upload" class="w-3.5 h-3.5"></i> Importa Excel
+                                <input type="file" id="importOrdersExcel" accept=".xlsx, .xls" class="hidden" onchange="importOrdersFromExcel(this)">
+                            </label>
+                            <button onclick="exportOrdersToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <form id="orderForm" onsubmit="addOrder(event)">
+                        <input type="hidden" id="editOrderIndex" value="-1">
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2.5 text-xs mb-3.5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">RDA (3Z)</label>
+                                <input type="text" id="codeRDA" placeholder="3Z-12345" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">ODA (3A)</label>
+                                <input type="text" id="codeODA" placeholder="3A-67890" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">DDT (4A)</label>
+                                <input type="text" id="codeDDT" placeholder="4A-99812" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Fornitore</label>
+                                <input type="text" id="supplier" required placeholder="Ragione Sociale" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Reparto</label>
+                                <input type="text" id="department" placeholder="Produzione" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Referente</label>
+                                <input type="text" id="contactPerson" placeholder="Ing. Rossi" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Ordine</label>
+                                <input type="date" id="orderDate" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Consegna</label>
+                                <input type="date" id="deliveryDate" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Tolleranza (GG)</label>
+                                <input type="number" id="maxDelayDays" min="0" value="0" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Trasporto (€)</label>
+                                <input type="number" id="transportCost" step="0.01" min="0" value="0.00" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <!-- Sezione Multi-Articolo dell'Ordine -->
+                        <div class="border-t border-slate-800 pt-3 mb-3.5">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold text-slate-300">Articoli Inclusi nell'Ordine:</span>
+                                <button type="button" onclick="addOrderItemRow()" class="bg-blue-950 hover:bg-blue-900 text-blue-300 border border-blue-800/60 text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Articolo
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto border border-slate-800 rounded-xl">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-slate-900 uppercase text-[10px] text-slate-400 border-b border-slate-800">
+                                        <tr>
+                                            <th class="py-2 px-3">Descrizione Articolo</th>
+                                            <th class="py-2 px-3 text-right w-24">Q.tà</th>
+                                            <th class="py-2 px-3 text-right w-28">Prezzo Unit. (€)</th>
+                                            <th class="py-2 px-3 text-right w-32">Totale (€)</th>
+                                            <th class="py-2 px-3 text-center w-14">Azione</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderItemsTableBody" class="divide-y divide-slate-800/60"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2.5">
+                            <button type="button" id="cancelEditBtn" onclick="resetOrderForm()" class="hidden bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-xl text-xs transition">Annulla</button>
+                            <button type="submit" id="submitOrderBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow-lg shadow-blue-600/20"><i data-lucide="save" class="w-4 h-4"></i> Salva Ordine</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- TABELLA 4: REGISTRO ORDINI -->
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <div class="flex justify-between items-center mb-2.5 flex-none">
+                        <h3 class="font-bold text-slate-200 text-xs">Registro Ordini</h3>
+                        <select id="archiveFilter" onchange="renderOrdersTable()" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1 text-xs outline-none">
+                            <option value="active">Solo Ordini Attivi</option>
+                            <option value="all">Tutti (Attivi + Conclusi)</option>
+                            <option value="archived">Solo Conclusi / Archiviati</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 text-center">Riferimenti <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Fornitore <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Reparto / Ref. <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Articoli<input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Ordine / Consegna <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Tol. <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Trasporto (€) <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-right">Totale Netto (€) <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 7, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Avanzamento <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 8, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Stato <input type="text" class="col-filter" oninput="filterTable('ordersTableBody', 9, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 6: SCADENZARIO CONSEGNE ==================== -->
+            <div id="tab-scadenzario" class="tab-content hidden flex flex-col gap-3.5 h-full">
+                <!-- TABELLA 5: SCADENZARIO CRONOLOGICO CONSEGNE MERCI -->
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <div class="mb-2.5 flex justify-between items-center flex-none">
+                        <div>
+                            <h3 class="font-bold text-slate-200 text-xs flex items-center gap-2"><i data-lucide="calendar-clock" class="w-4 h-4 text-blue-400"></i> Scadenzario Consegne </h3>
+                            <p class="text-[10px] text-slate-400">Priorità d'arrivo ordinate per urgenza di consegna e tolleranza ritardo.</p>
+                        </div>
+                        <button onclick="exportTableToExcel('scheduleTableBody', 'Scadenzario_Consegne')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
+                        </button>
+                    </div>
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 text-center">Termine Consegna <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Priorità / Urgenza <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Fornitore <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Articoli Inclusi <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Riferimenti <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Referente <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Stato Operativo <input type="text" class="col-filter" oninput="filterTable('scheduleTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Azione Rapida</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scheduleTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB 7: REPORT & DOSSIER DIREZIONALE AUTOMATICO ==================== -->
+            <div id="tab-reports" class="tab-content hidden flex flex-col gap-3.5 h-full overflow-y-auto">
+                <div class="card p-4 bg-gradient-to-r from-slate-900 to-purple-950 text-white flex justify-between items-center gap-3 no-print flex-none border border-purple-900/40">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-purple-600 rounded-xl shadow"><i data-lucide="printer" class="w-5 h-5 text-white"></i></div>
+                        <div>
+                            <h3 class="font-bold text-sm">Generatore Dossier Direzionale Negoziazione</h3>
+                            <p class="text-[11px] text-slate-300">Esporta o stampa in PDF il report aggiornato per le trattative commerciali.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2.5">
+                        <button onclick="exportTableToExcel('repDynamicContent', 'Dossier_Direzionale_Summary')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                            <i data-lucide="download" class="w-4 h-4"></i> Esporta Excel
+                        </button>
+                        <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Stampa / PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Executive Report Dinamico -->
+                <div class="card p-6 flex flex-col gap-4 border border-slate-800 print-full-width bg-slate-900">
+                    <div class="flex justify-between items-start border-b border-slate-800 pb-3">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-400">HUB ACQUISTI</span>
+                            <h2 class="text-lg font-black text-white mt-0.5">Dossier Sintetico Analisi Acquisti & Forecast</h2>
+                        </div>
+                        <div class="text-right text-[11px] text-slate-400">
+                            <p>Data Generazione: <strong id="repCurrentDate" class="text-white">--/--/----</strong></p>
+                            <p>Fornitore Principale: <strong id="repMainVendorName" class="text-blue-400">N/D</strong></p>
+                            <p>Fornitore Secondario: <strong id="repVendorName" class="text-emerald-400">N/D</strong></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3.5 bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs">
+                        <div>
+                            <p class="text-slate-400 font-medium text-[11px]">Spesa Anno Proiettata (Fornitore Attuale):</p>
+                            <p id="repExecCurrentSpend" class="text-base font-extrabold text-white">€ 0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 font-medium text-[11px]">Spesa Proiettata (Mix Ottimale):</p>
+                            <p id="repExecOptimalSpend" class="text-base font-extrabold text-blue-400">€ 0.00</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-400 font-medium text-[11px]">Risparmio Max Calcolato:</p>
+                            <p id="repExecOptSavings" class="text-base font-extrabold text-emerald-400">€ 0.00</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3">
+                        <h3 class="font-bold text-slate-200 text-xs mb-2.5">Sintesi Strategica & Opportunità di Negoziazione</h3>
+                        <div id="repDynamicContent" class="text-xs text-slate-300 space-y-2">
+                            <p class="italic text-slate-500">Carica i file del Database Storico e del Listino Offerta per generare automaticamente l'analisi di negoziazione.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ==================== TAB INTEGRATI: MODULO OFFERTE ==================== -->
+
+            <!-- TAB 8: NUOVA RICHIESTA OFFERTA / RDO -->
+            <div id="tab-nuova-offerta" class="tab-content hidden flex flex-col gap-3.5 h-full overflow-y-auto">
+                <div class="card p-4 flex-none bg-gradient-to-r from-purple-950 to-slate-900 text-white flex justify-between items-center border border-purple-900/40">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 bg-purple-600 rounded-xl shadow"><i data-lucide="file-plus" class="w-5 h-5 text-white"></i></div>
+                        <div>
+                            <h3 id="offerFormTitle" class="font-bold text-xs uppercase tracking-wider">Nuova Richiesta Offerta / RdO</h3>
+                            <p class="text-[10px] text-purple-200">Inserisci i dati per generare una Richiesta di Offerta formalizzata.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-5 flex-none border border-slate-800">
+                    <form id="offerForm" onsubmit="addOrUpdateOffer(event)">
+                        <input type="hidden" id="editOfferIndex" value="-1">
+                        
+                        <!-- Campi RDA / Richiesta Acquisto interna & Dati Fornitore -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3.5 text-xs mb-3.5">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Riferimento RdA</label>
+                                <input type="text" id="internalRdaCode" required placeholder="Es. RDA-2026-088" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none font-semibold">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Reparto Richiedente</label>
+                                <input type="text" id="internalCostCenter" placeholder="Es. Produzione" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Richiedente</label>
+                                <input type="text" id="internalRequester" placeholder="Es. Mario Rossi" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Emissione RdA</label>
+                                <input type="date" id="internalRdaDate" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-3 gap-3.5 text-xs mb-4 pt-3 border-t border-slate-800">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Fornitore</label>
+                                <input type="text" id="offerCustomer" required placeholder="Nome / Ragione Sociale" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Referente Fornitore</label>
+                                <input type="text" id="offerContact" placeholder="Es. Ing. Verdi" class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Data Consegna Richiesta</label>
+                                <input type="date" id="offerDeliveryDate" required class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg px-2.5 py-1.5 outline-none">
+                            </div>
+                        </div>
+
+                        <!-- Campo Note Generali -->
+                        <div class="mb-4">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Note Generali</label>
+                            <textarea id="offerNotes" rows="2" placeholder="Inserisci eventuali note o condizioni generali della richiesta..." class="w-full bg-slate-950 border border-slate-700 text-white rounded-lg p-2.5 text-xs outline-none resize-none"></textarea>
+                        </div>
+
+                        <!-- Inserimento Articoli Offerta/RDA Multi-Articolo con Quantità a Compilazione Libera -->
+                        <div class="border-t border-slate-800 pt-3.5 mb-3.5">
+                            <div class="flex justify-between items-center mb-2.5">
+                                <h4 class="font-bold text-xs text-slate-200 flex items-center gap-1.5"><i data-lucide="package-plus" class="w-4 h-4 text-purple-400"></i> Dettaglio Articoli Richiesti (Quantità a Compilazione Libera)</h4>
+                                <button type="button" onclick="addOfferItemRow()" class="bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-800/60 text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Articolo
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto border border-slate-800 rounded-xl">
+                                <table class="w-full text-xs text-left">
+                                    <thead class="bg-slate-900 uppercase text-[10px] text-slate-400 border-b border-slate-800">
+                                        <tr>
+                                            <th class="py-2 px-3">Descrizione Articolo</th>
+                                            <th class="py-2 px-3 text-right w-48">Q.tà (Libera)</th>
+                                            <th class="py-2 px-3 text-center w-16">Azione</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="offerItemsTableBody" class="divide-y divide-slate-800/60"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-3.5">
+                            <div class="flex justify-end items-center bg-purple-950/30 p-3.5 rounded-xl border border-purple-900/40">
+                                <div class="flex flex-wrap gap-2.5">
+                                    <button type="button" onclick="generateOfferEmail()" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold px-3.5 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                                        <i data-lucide="mail" class="w-4 h-4"></i> Genera Email RdO
+                                    </button>
+                                    <button type="button" id="cancelOfferEditBtn" onclick="resetOfferForm()" class="hidden bg-slate-700 hover:bg-slate-600 text-white font-semibold px-3.5 py-2 rounded-xl text-xs transition">Annulla</button>
+                                    <button type="submit" id="submitOfferBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition shadow-lg shadow-purple-600/20">
+                                        <i data-lucide="save" class="w-4 h-4"></i> Salva Documento
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Anteprima Email -->
+                            <div id="emailPreviewContainer" class="hidden card p-3.5 bg-slate-950 border border-slate-800">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                                        <i data-lucide="mail-check" class="w-4 h-4 text-amber-400"></i> Anteprima Email
+                                    </span>
+                                    <button type="button" onclick="copyEmailText()" class="bg-slate-800 hover:bg-slate-700 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 transition">
+                                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copia Testo
+                                    </button>
+                                </div>
+                                <textarea id="emailPreviewText" rows="6" readonly class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs font-mono text-slate-300 outline-none resize-none"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 9: REGISTRO OFFERTE -->
+            <div id="tab-registro-offerte" class="tab-content hidden flex flex-col gap-3.5 h-full">
+                <div class="card p-3.5 flex flex-col flex-1 min-h-0">
+                    <div class="flex justify-between items-center mb-2.5 flex-none">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="list" class="w-4 h-4 text-purple-400"></i>
+                            <h3 class="font-bold text-slate-200 text-xs">Registro Offerte</h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <select id="offerArchiveFilter" onchange="renderOffersTable()" class="bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-2.5 py-1 text-xs outline-none">
+                                <option value="NO">Mostra solo Offerte Attive</option>
+                                <option value="SI">Mostra Offerte Archiviate</option>
+                                <option value="ALL">Tutte (Attive e Archiviate)</option>
+                            </select>
+                            <button onclick="exportOffersToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3.5 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Esporta Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex-1 min-h-0 overflow-y-auto border border-slate-800 rounded-xl">
+                        <table class="w-full text-xs text-left text-slate-300 adaptable-table">
+                            <thead class="text-[11px] text-slate-200 uppercase bg-slate-900 sticky top-0 z-10 border-b border-slate-800">
+                                <tr>
+                                    <th class="py-2.5 px-3 text-center">Codice <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 0, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">RdI / Fornitore <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 1, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Cliente / Fornitore <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 2, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Emissione / Consegna <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 3, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3">Dettaglio Articoli <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 4, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 font-normal text-slate-400">Note <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 5, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Avanzamento / Esito <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 6, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Stato <input type="text" class="col-filter" oninput="filterTable('offersTableBody', 7, this.value)" placeholder="Filtra..."></th>
+                                    <th class="py-2.5 px-3 text-center">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody id="offersTableBody" class="divide-y divide-slate-800/60"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-slate-900/90 text-slate-400 py-2 text-center text-[10px] flex-none border-t border-slate-800 no-print z-20">
+        HUB ACQUISTI & MODULO OFFERTE &bull; Processing Locale Offline 100% Client-Side
+    </footer>
+
+    <!-- Script JS Unificato e Completo -->
     <script>
-        const modalOverlay = document.getElementById('modalOverlay');
-        const openModalBtn = document.getElementById('openModal');
-        const closeModalBtn = document.getElementById('closeModal');
+        lucide.createIcons();
 
-        openModalBtn.addEventListener('click', () => {
-            modalOverlay.classList.add('active');
-        });
+        let rawData = [];
+        let filteredData = [];
+        let secondaryPricelist = {};
+        let orders = JSON.parse(localStorage.getItem('app_orders_data')) || [];
+        let offers = JSON.parse(localStorage.getItem('app_offers_data')) || [];
 
-        closeModalBtn.addEventListener('click', () => {
-            modalOverlay.classList.remove('active');
-        });
+        let currentOrderFormItems = [{ desc: '', qty: 1, price: 0 }];
+        let currentOfferFormItems = [{ desc: '', qty: '1' }];
 
-        modalOverlay.addEventListener('click', (e) => {
-            if (e.target === modalOverlay) {
-                modalOverlay.classList.remove('active');
+        let chartTopItemsInstance = null;
+        let chartMonthlyInstance = null;
+        let chartForecastInstance = null;
+        let chartPriceHistoryInstance = null;
+
+        if (offers.length === 0) {
+            offers = [
+                {
+                    code: 'OFF-2026-001',
+                    internalRdaCode: 'RDA-2026-012',
+                    internalCostCenter: 'Produzione',
+                    internalRequester: 'Mario Rossi',
+                    internalRdaDate: '2026-08-01',
+                    customer: 'Fornitori Industriali Spa',
+                    contact: 'Ing. Verdi',
+                    deliveryDate: '2026-09-30',
+                    date: '2026-08-10',
+                    validUntil: '2026-09-20',
+                    notes: 'Fornitura urgente per produzione terzo trimestre.',
+                    archived: false,
+                    stages: { inviata: true, ricevuta: false },
+                    items: [
+                        { desc: 'Valvola di regolazione idraulica', qty: '10 pz' },
+                        { desc: 'Raccordo in ottone 1/2', qty: '1 confezione da 100' }
+                    ]
+                }
+            ];
+            saveOffersToStorage();
+        }
+
+        // Funzione Esportazione Tabelle in Excel
+        function exportTableToExcel(tbodyOrElementId, filename) {
+            const element = document.getElementById(tbodyOrElementId);
+            if (!element) return;
+            
+            let tableElement = element.tagName === 'TABLE' ? element : element.closest('table');
+            if (!tableElement) {
+                const ws = XLSX.utils.json_to_sheet([{ "Info": element.innerText }]);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Report");
+                XLSX.writeFile(wb, `${filename}.xlsx`);
+                return;
             }
-        });
+
+            const wb = XLSX.utils.table_to_book(tableElement, { sheet: "Esportazione" });
+            XLSX.writeFile(wb, `${filename}.xlsx`);
+        }
+
+        function filterTable(tbodyId, colIndex, searchText) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            const rows = tbody.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                if (cells.length <= 1) continue;
+
+                let match = true;
+                const table = tbody.closest('table');
+                const filters = table.querySelectorAll('.col-filter');
+                
+                filters.forEach(filterInput => {
+                    const filterCol = Array.from(filterInput.closest('tr').children).indexOf(filterInput.closest('th'));
+                    const val = filterInput.value.toLowerCase().trim();
+                    if (val !== '' && cells[filterCol]) {
+                        const text = (cells[filterCol].textContent || cells[filterCol].innerText).toLowerCase();
+                        if (!text.includes(val)) {
+                            match = false;
+                        }
+                    }
+                });
+
+                rows[i].style.display = match ? '' : 'none';
+            }
+        }
+
+        document.getElementById('excelFile').addEventListener('change', e => { if(e.target.files.length) handleMainFile(e.target.files[0]); });
+        document.getElementById('secondaryExcelFile').addEventListener('change', e => { if(e.target.files.length) handleSecondaryFile(e.target.files[0]); });
+
+        function saveOrdersToStorage() { localStorage.setItem('app_orders_data', JSON.stringify(orders)); }
+        function saveOffersToStorage() { localStorage.setItem('app_offers_data', JSON.stringify(offers)); }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-blue-600', 'bg-purple-600', 'text-white', 'shadow-lg');
+                el.classList.add('bg-slate-800/60', 'text-slate-300', 'hover:bg-slate-800');
+            });
+
+            const target = document.getElementById(tabId);
+            if (target) target.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-slate-800/60', 'text-slate-300', 'hover:bg-slate-800');
+                if (tabId.includes('offerta') || tabId.includes('offerte')) {
+                    activeBtn.classList.add('bg-purple-600', 'text-white', 'shadow-lg', 'shadow-purple-600/20');
+                } else {
+                    activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-600/20');
+                }
+            }
+
+            if (tabId === 'tab-comparison') renderComparisonTab();
+            if (tabId === 'tab-forecast') renderForecastTab();
+            if (tabId === 'tab-abc') renderABCTab();
+            if (tabId === 'tab-registro') { renderOrderItemsRows(); renderOrdersTable(); }
+            if (tabId === 'tab-scadenzario') renderScheduleTable();
+            if (tabId === 'tab-reports') renderReportsTab();
+            if (tabId === 'tab-nuova-offerta') renderOfferItemsRows();
+            if (tabId === 'tab-registro-offerte') renderOffersTable();
+        }
+
+        function parseRowDate(row) {
+            const explicitYear = row['Documento//Anno'];
+            const dateVal = row['Documento//Data'];
+
+            if (typeof dateVal === 'number') {
+                const parsed = XLSX.SSF.parse_date_code(dateVal);
+                if (parsed) return { year: parsed.y, month: String(parsed.m).padStart(2, '0'), yearMonth: parsed.y + '-' + String(parsed.m).padStart(2, '0'), fullDate: new Date(parsed.y, parsed.m - 1, parsed.d) };
+            } else if (typeof dateVal === 'string' && dateVal.trim() !== '') {
+                const d = new Date(dateVal);
+                if (!isNaN(d.getTime()) && d.getFullYear() > 1970) {
+                    return { year: d.getFullYear(), month: String(d.getMonth() + 1).padStart(2, '0'), yearMonth: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), fullDate: d };
+                }
+            } else if (dateVal instanceof Date && !isNaN(dateVal.getTime())) {
+                if (dateVal.getFullYear() > 1970) {
+                    return { year: dateVal.getFullYear(), month: String(dateVal.getMonth() + 1).padStart(2, '0'), yearMonth: dateVal.getMonth() + '-' + String(dateVal.getMonth() + 1).padStart(2, '0'), fullDate: dateVal };
+                }
+            }
+
+            if (explicitYear && !isNaN(parseInt(explicitYear))) {
+                const y = parseInt(explicitYear);
+                return { year: y, month: '01', yearMonth: y + '-01', fullDate: new Date(y, 0, 1) };
+            }
+            return null;
+        }
+
+        function handleMainFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+                const firstSheet = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheet];
+                rawData = XLSX.utils.sheet_to_json(worksheet);
+
+                populateFilterDropdowns();
+                populatePriceHistorySelect();
+                applyFilters();
+                switchTab('tab-dashboard');
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function populateFilterDropdowns() {
+            const vendorSelect = document.getElementById('filterVendor');
+            const yearSelect = document.getElementById('filterYear');
+            const forecastYearSelect = document.getElementById('forecastYearSelect');
+
+            const vendors = new Set();
+            const years = new Set();
+
+            rawData.forEach(row => {
+                const vendor = row['Cli/For Contabile//Ragione sociale'];
+                if(vendor) vendors.add(vendor);
+
+                const dateObj = parseRowDate(row);
+                if(dateObj) years.add(dateObj.year);
+            });
+
+            vendorSelect.innerHTML = '<option value="ALL">Tutti i Fornitori</option>';
+            vendors.forEach(v => vendorSelect.innerHTML += `<option value="${v}">${v}</option>`);
+
+            yearSelect.innerHTML = '<option value="ALL">Tutti gli Anni</option>';
+            forecastYearSelect.innerHTML = '';
+            
+            const sortedYears = Array.from(years).sort().reverse();
+            sortedYears.forEach(y => {
+                yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+                forecastYearSelect.innerHTML += `<option value="${y}">${y}</option>`;
+            });
+
+            vendorSelect.addEventListener('change', applyFilters);
+            yearSelect.addEventListener('change', applyFilters);
+        }
+
+        function populatePriceHistorySelect() {
+            const select = document.getElementById('itemPriceHistorySelect');
+            const items = new Map();
+
+            rawData.forEach(row => {
+                const code = row['Articolo//Codice'];
+                const desc = row['Descrizione articolo'] || '';
+                if(code && !items.has(code)) items.set(code, desc);
+            });
+
+            select.innerHTML = '';
+            items.forEach((desc, code) => {
+                select.innerHTML += `<option value="${code}">${code} - ${desc.substring(0,30)}</option>`;
+            });
+        }
+
+        function applyFilters() {
+            const selectedVendor = document.getElementById('filterVendor').value;
+            const selectedYear = document.getElementById('filterYear').value;
+
+            filteredData = rawData.filter(row => {
+                const vendorMatch = (selectedVendor === 'ALL') || (row['Cli/For Contabile//Ragione sociale'] === selectedVendor);
+                let yearMatch = true;
+                if(selectedYear !== 'ALL') {
+                    const dateObj = parseRowDate(row);
+                    yearMatch = dateObj ? (dateObj.year == selectedYear) : false;
+                }
+                return vendorMatch && yearMatch;
+            });
+
+            updateKPIs();
+            renderDashboardCharts();
+            renderDashboardTable();
+        }
+
+        function updateKPIs() {
+            let totalSpend = 0, totalQty = 0;
+            const items = new Set();
+            const vendors = new Set();
+
+            filteredData.forEach(row => {
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+                const qty = parseFloat(row['Quantità Doc.']) || 0;
+                const itemCode = row['Articolo//Codice'];
+                const vendor = row['Cli/For Contabile//Ragione sociale'];
+
+                totalSpend += spend;
+                totalQty += qty;
+                if(itemCode) items.add(itemCode);
+                if(vendor) vendors.add(vendor);
+            });
+
+            document.getElementById('kpiTotalSpend').innerText = '€ ' + totalSpend.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('kpiTotalQty').innerText = totalQty.toLocaleString('it-IT');
+            document.getElementById('kpiUniqueItems').innerText = items.size;
+            document.getElementById('kpiUniqueVendors').innerText = vendors.size;
+            document.getElementById('recordCountInfo').innerText = `Righe analizzate: ${filteredData.length} su ${rawData.length}`;
+        }
+
+        function renderDashboardCharts() {
+            const itemMap = {};
+            filteredData.forEach(row => {
+                const name = row['Descrizione articolo'] || row['Articolo//Codice'] || 'N/D';
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+                itemMap[name] = (itemMap[name] || 0) + spend;
+            });
+
+            const sortedItems = Object.entries(itemMap).sort((a,b) => b[1] - a[1]).slice(0, 10);
+
+            const monthMap = {};
+            filteredData.forEach(row => {
+                const dateObj = parseRowDate(row);
+                if(dateObj) {
+                    const monthKey = dateObj.yearMonth;
+                    const spend = parseFloat(row['Importo netto Totale']) || 0;
+                    monthMap[monthKey] = (monthMap[monthKey] || 0) + spend;
+                }
+            });
+
+            const sortedMonths = Object.keys(monthMap).sort();
+
+            if(chartTopItemsInstance) chartTopItemsInstance.destroy();
+            const ctx1 = document.getElementById('chartTopItems').getContext('2d');
+            chartTopItemsInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: sortedItems.map(i => i[0].length > 20 ? i[0].substring(0,20) + '...' : i[0]),
+                    datasets: [{ label: 'Spesa (€)', data: sortedItems.map(i => i[1]), backgroundColor: '#3b82f6', borderRadius: 6 }]
+                },
+                options: { 
+                    indexAxis: 'y', 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { display: false }, ticks: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+
+            if(chartMonthlyInstance) chartMonthlyInstance.destroy();
+            const ctx2 = document.getElementById('chartMonthlySpend').getContext('2d');
+            chartMonthlyInstance = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: sortedMonths,
+                    datasets: [{ label: 'Spesa (€)', data: sortedMonths.map(m => monthMap[m]), borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3, pointRadius: 4, pointBackgroundColor: '#10b981' }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+        }
+
+        function renderDashboardTable() {
+            const tableBody = document.getElementById('tableBody');
+            const itemSummary = {};
+            filteredData.forEach(row => {
+                const code = row['Articolo//Codice'] || 'N/D';
+                const desc = row['Descrizione articolo'] || '';
+                const qty = parseFloat(row['Quantità Doc.']) || 0;
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+                const um = row['UM Doc.'] || '';
+
+                if(!itemSummary[code]) itemSummary[code] = { desc, totalQty: 0, totalSpend: 0, um };
+                itemSummary[code].totalQty += qty;
+                itemSummary[code].totalSpend += spend;
+            });
+
+            let html = '';
+            Object.entries(itemSummary).forEach(([code, data]) => {
+                const avgPrice = data.totalQty > 0 ? (data.totalSpend / data.totalQty) : 0;
+                html += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2 px-3 font-mono font-semibold text-blue-400">${code}</td>
+                        <td class="py-2 px-3 text-slate-200">${data.desc}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">€ ${avgPrice.toFixed(2)}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">${data.totalQty.toLocaleString()}</td>
+                        <td class="py-2 px-3 text-center text-slate-400">${data.um}</td>
+                        <td class="py-2 px-3 text-right font-bold text-white">€ ${data.totalSpend.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    </tr>
+                `;
+            });
+            tableBody.innerHTML = html || '<tr><td colspan="6" class="text-center py-6 text-slate-500">Nessun dato disponibile. Carica un file Excel per iniziare.</td></tr>';
+        }
+
+        function downloadPricelistTemplate() {
+            let templateData = [];
+            const itemMap = new Map();
+
+            if (rawData.length > 0) {
+                rawData.forEach(row => {
+                    const code = row['Articolo//Codice'];
+                    const desc = row['Descrizione articolo'];
+                    const um = row['UM Doc.'];
+                    if (code && !itemMap.has(code)) itemMap.set(code, { desc: desc || '', um: um || 'PZ' });
+                });
+
+                itemMap.forEach((val, code) => {
+                    templateData.push({ "Codice Articolo": code, "Descrizione Articolo": val.desc, "Prezzo Unitario Offerto (€)": "", "Unità di Misura": val.um, "Note / Condizioni": "" });
+                });
+            } else {
+                templateData = [
+                    { "Codice Articolo": "ART-001", "Descrizione Articolo": "Esempio Articolo A", "Prezzo Unitario Offerto (€)": 12.50, "Unità di Misura": "PZ", "Note / Condizioni": "Sconto quantitativo" }
+                ];
+            }
+
+            const ws = XLSX.utils.json_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Listino_Fornitore");
+            XLSX.writeFile(wb, "Template_Listino_Fornitore.xlsx");
+        }
+
+        function downloadOrdersTemplate() {
+            const templateData = [{
+                "RDA (3Z)": "3Z-2026-001", "ODA (3A)": "3A-2026-088", "DDT (4A)": "4A-99120", "Fornitore": "Fornitore Alfa Srl", "Reparto": "Produzione", "Referente": "Ing. Rossi", "Descrizione": "Cuscinetti Industriali", "Data Ordine": "2026-08-01", "Data Consegna Prevista": "2026-09-15", "Tolleranza Ritardo (GG)": 3, "Quantità": 50, "Prezzo Unitario (€)": 24.50, "Trasporto (€)": 15.00
+            }];
+
+            const ws = XLSX.utils.json_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template_Ordini");
+            XLSX.writeFile(wb, "Template_Importazione_Ordini.xlsx");
+        }
+
+        function handleSecondaryFile(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheet];
+                const rows = XLSX.utils.sheet_to_json(worksheet);
+
+                secondaryPricelist = {};
+                rows.forEach(row => {
+                    const code = row['Codice Articolo'] || row['Codice'] || row['Articolo'];
+                    let price = row['Prezzo Unitario Offerto (€)'] || row['Prezzo'] || row['Prezzo Listino'];
+                    if (code !== undefined && code !== null) {
+                        const cleanCode = String(code).trim();
+                        const numPrice = parseFloat(price);
+                        if (!isNaN(numPrice) && numPrice >= 0) secondaryPricelist[cleanCode] = { price: numPrice, desc: row['Descrizione Articolo'] || '', note: row['Note / Condizioni'] || '' };
+                    }
+                });
+
+                const count = Object.keys(secondaryPricelist).length;
+                document.getElementById('secondaryStatusInfo').innerText = `✅ Listino Offerta Caricato: ${count} articoli riconosciuti`;
+                document.getElementById('secondaryStatusCard').classList.remove('hidden');
+
+                renderComparisonTab();
+                renderForecastTab();
+                renderReportsTab();
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function renderComparisonTab() {
+            const cmpTableBody = document.getElementById('cmpTableBody');
+            const secVendorName = document.getElementById('secondaryVendorName').value || 'Nuovo Fornitore';
+
+            const itemSummary = {};
+            rawData.forEach(row => {
+                const code = row['Articolo//Codice'];
+                if(!code) return;
+                const desc = row['Descrizione articolo'] || '';
+                const qty = parseFloat(row['Quantità Doc.']) || 0;
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+
+                if(!itemSummary[code]) itemSummary[code] = { desc, totalQty: 0, totalSpend: 0 };
+                itemSummary[code].totalQty += qty;
+                itemSummary[code].totalSpend += spend;
+            });
+
+            let matchedCount = 0, cheaperCount = 0, totalSavingsHistorical = 0, totalCurrentSpendHistorical = 0;
+            let html = '';
+
+            Object.entries(itemSummary).forEach(([code, data]) => {
+                const currentAvgPrice = data.totalQty > 0 ? (data.totalSpend / data.totalQty) : 0;
+                const secItem = secondaryPricelist[code];
+                const secPrice = secItem ? secItem.price : null;
+
+                let deltaUnit = 0, deltaPct = 0, deltaTotalSpend = 0, badgeHtml = '';
+
+                if (secPrice !== null) {
+                    matchedCount++;
+                    deltaUnit = secPrice - currentAvgPrice;
+                    deltaPct = currentAvgPrice > 0 ? ((secPrice - currentAvgPrice) / currentAvgPrice) * 100 : 0;
+                    deltaTotalSpend = (secPrice * data.totalQty) - data.totalSpend;
+                    totalCurrentSpendHistorical += data.totalSpend;
+
+                    if (secPrice < currentAvgPrice) {
+                        cheaperCount++;
+                        totalSavingsHistorical += Math.abs(deltaTotalSpend);
+                        badgeHtml = `<span class="bg-emerald-950 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">Conviene ${secVendorName}</span>`;
+                    } else if (secPrice > currentAvgPrice) {
+                        badgeHtml = `<span class="bg-amber-950 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-800">Conviene Attuale</span>`;
+                    } else {
+                        badgeHtml = `<span class="bg-blue-950 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-800">Parità</span>`;
+                    }
+                } else {
+                    badgeHtml = `<span class="bg-slate-900 text-slate-400 text-[9px] font-medium px-2 py-0.5 rounded-full border border-slate-800">Non in Listino</span>`;
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2 px-3 font-mono font-semibold text-blue-400">${code}</td>
+                        <td class="py-2 px-3 text-slate-200">${data.desc}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">${data.totalQty.toLocaleString()}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">€ ${currentAvgPrice.toFixed(2)}</td>
+                        <td class="py-2 px-3 text-right font-bold ${secPrice !== null ? 'text-white' : 'text-slate-500'}">${secPrice !== null ? '€ ' + secPrice.toFixed(2) : '-'}</td>
+                        <td class="py-2 px-3 text-right ${deltaUnit < 0 ? 'text-emerald-400 font-bold' : 'text-rose-400'}">${secPrice !== null ? (deltaUnit <= 0 ? '' : '+') + '€ ' + deltaUnit.toFixed(2) + ' (' + deltaPct.toFixed(1) + '%)' : '-'}</td>
+                        <td class="py-2 px-3 text-right ${deltaTotalSpend < 0 ? 'text-emerald-400 font-bold' : 'text-rose-400'}">${secPrice !== null ? (deltaTotalSpend <= 0 ? '' : '+') + '€ ' + deltaTotalSpend.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '-'}</td>
+                        <td class="py-2 px-3 text-center">${badgeHtml}</td>
+                    </tr>
+                `;
+            });
+
+            cmpTableBody.innerHTML = html || '<tr><td colspan="8" class="text-center py-6 text-slate-500">Carica il listino offerta per la comparazione.</td></tr>';
+
+            document.getElementById('cmpKpiMatched').innerText = `${matchedCount} / ${Object.keys(itemSummary).length}`;
+            document.getElementById('cmpKpiCheaperCount').innerText = cheaperCount;
+            document.getElementById('cmpKpiTotalSavings').innerText = '€ ' + totalSavingsHistorical.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('cmpKpiPctSavings').innerText = (totalCurrentSpendHistorical > 0 ? (totalSavingsHistorical / totalCurrentSpendHistorical) * 100 : 0).toFixed(1) + ' %';
+        }
+
+        function renderForecastTab() {
+            const forecastSelect = document.getElementById('forecastYearSelect');
+            if(!forecastSelect.value) return;
+            const targetYear = forecastSelect.value;
+            const elapsedMonths = parseInt(document.getElementById('elapsedMonthsInput').value) || 8;
+            const remainingMonths = Math.max(1, 12 - elapsedMonths);
+            document.getElementById('remainingMonthsLabel').innerText = remainingMonths;
+
+            const secVendorName = document.getElementById('secondaryVendorName').value || 'Nuovo Fornitore';
+
+            const yearData = rawData.filter(row => {
+                const dateObj = parseRowDate(row);
+                return dateObj ? (dateObj.year == targetYear) : false;
+            });
+
+            const itemStats = {};
+            yearData.forEach(row => {
+                const code = row['Articolo//Codice'];
+                if(!code) return;
+                const desc = row['Descrizione articolo'] || '';
+                const qty = parseFloat(row['Quantità Doc.']) || 0;
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+
+                if(!itemStats[code]) itemStats[code] = { desc, qty: 0, spend: 0 };
+                itemStats[code].qty += qty;
+                itemStats[code].spend += spend;
+            });
+
+            let currentHistoricalSpend = 0, currentRemainingSpendTot = 0, secondaryRemainingSpendTot = 0, optimalRemainingSpendTot = 0;
+            const fctTableBody = document.getElementById('fctTableBody');
+            let tableHtml = '';
+
+            Object.entries(itemStats).forEach(([code, data]) => {
+                currentHistoricalSpend += data.spend;
+                const currentAvgPrice = data.qty > 0 ? (data.spend / data.qty) : 0;
+                const monthlyQty = data.qty / elapsedMonths;
+                const remainingQty = monthlyQty * remainingMonths;
+
+                const remainingSpendCurrent = remainingQty * currentAvgPrice;
+                const secItem = secondaryPricelist[code];
+                const secPrice = secItem ? secItem.price : null;
+
+                const remainingSpendSec = remainingQty * (secPrice !== null ? secPrice : currentAvgPrice);
+                const optimalPrice = (secPrice !== null && secPrice < currentAvgPrice) ? secPrice : currentAvgPrice;
+                const remainingSpendOpt = remainingQty * optimalPrice;
+
+                currentRemainingSpendTot += remainingSpendCurrent;
+                secondaryRemainingSpendTot += remainingSpendSec;
+                optimalRemainingSpendTot += remainingSpendOpt;
+
+                const itemSavingsOpt = remainingSpendCurrent - remainingSpendOpt;
+
+                let recBadge = '';
+                if (secPrice === null) recBadge = `<span class="bg-slate-900 text-slate-400 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-slate-800">Mantieni Attuale</span>`;
+                else if (secPrice < currentAvgPrice) recBadge = `<span class="bg-emerald-950 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">Passa a ${secVendorName}</span>`;
+                else recBadge = `<span class="bg-blue-950 text-blue-300 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-blue-800">Mantieni Attuale</span>`;
+
+                tableHtml += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2 px-3 font-mono font-semibold text-blue-400">${code}</td>
+                        <td class="py-2 px-3 text-slate-200">${data.desc}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">${monthlyQty.toFixed(1)} / m</td>
+                        <td class="py-2 px-3 text-right font-semibold text-white">${Math.round(remainingQty).toLocaleString()}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">€ ${remainingSpendCurrent.toFixed(2)}</td>
+                        <td class="py-2 px-3 text-right font-semibold text-slate-200">€ ${remainingSpendSec.toFixed(2)}</td>
+                        <td class="py-2 px-3 text-right font-bold text-emerald-400">€ ${itemSavingsOpt.toFixed(2)}</td>
+                        <td class="py-2 px-3 text-center">${recBadge}</td>
+                    </tr>
+                `;
+            });
+
+            fctTableBody.innerHTML = tableHtml || '<tr><td colspan="8" class="text-center py-6 text-slate-500">Nessun dato per l\'anno selezionato.</td></tr>';
+
+            const totalForecastCurrent = currentHistoricalSpend + currentRemainingSpendTot;
+            const totalForecastSecondary = currentHistoricalSpend + secondaryRemainingSpendTot;
+            const totalForecastOptimal = currentHistoricalSpend + optimalRemainingSpendTot;
+
+            document.getElementById('fctCurrentTotal').innerText = '€ ' + totalForecastCurrent.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('fctSecondaryTotal').innerText = '€ ' + totalForecastSecondary.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('fctOptimalTotal').innerText = '€ ' + totalForecastOptimal.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            if(chartForecastInstance) chartForecastInstance.destroy();
+            const ctxFct = document.getElementById('chartForecast').getContext('2d');
+            chartForecastInstance = new Chart(ctxFct, {
+                type: 'bar',
+                data: {
+                    labels: ['Attuale', `Nuovo (${secVendorName})`, 'Mix Best Price'],
+                    datasets: [
+                        { label: 'Storico (€)', data: [currentHistoricalSpend, currentHistoricalSpend, currentHistoricalSpend], backgroundColor: '#475569' },
+                        { label: 'Stima Residua (€)', data: [currentRemainingSpendTot, secondaryRemainingSpendTot, optimalRemainingSpendTot], backgroundColor: ['#ef4444', '#10b981', '#3b82f6'] }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    scales: { 
+                        x: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }, 
+                        y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } } 
+                    } 
+                }
+            });
+        }
+
+        function renderABCTab() {
+            const itemMap = {};
+            rawData.forEach(row => {
+                const code = row['Articolo//Codice'];
+                if(!code) return;
+                const desc = row['Descrizione articolo'] || '';
+                const spend = parseFloat(row['Importo netto Totale']) || 0;
+                const qty = parseFloat(row['Quantità Doc.']) || 0;
+
+                if(!itemMap[code]) itemMap[code] = { desc, spend: 0, qty: 0 };
+                itemMap[code].spend += spend;
+                itemMap[code].qty += qty;
+            });
+
+            const sorted = Object.entries(itemMap).sort((a,b) => b[1].spend - a[1].spend);
+            const totalSpendAll = sorted.reduce((sum, item) => sum + item[1].spend, 0);
+
+            let cumSpend = 0, countA = 0, spendA = 0, countB = 0, spendB = 0, countC = 0, spendC = 0;
+            let tableHtml = '';
+
+            sorted.forEach(([code, data]) => {
+                cumSpend += data.spend;
+                const cumPct = totalSpendAll > 0 ? (cumSpend / totalSpendAll) * 100 : 0;
+                const avgPrice = data.qty > 0 ? (data.spend / data.qty) : 0;
+
+                let category = 'C';
+                let badgeClass = 'bg-slate-800 text-slate-300 border-slate-700';
+
+                if (cumPct <= 80 || (cumPct - (data.spend / totalSpendAll) * 100 < 80)) {
+                    category = 'A';
+                    badgeClass = 'bg-rose-950 text-rose-300 font-bold border border-rose-800';
+                    countA++; spendA += data.spend;
+                } else if (cumPct <= 95) {
+                    category = 'B';
+                    badgeClass = 'bg-amber-950 text-amber-300 font-bold border border-amber-800';
+                    countB++; spendB += data.spend;
+                } else {
+                    category = 'C';
+                    badgeClass = 'bg-slate-900 text-slate-400 font-medium border border-slate-800';
+                    countC++; spendC += data.spend;
+                }
+
+                tableHtml += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2 px-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[9px] ${badgeClass}">Classe ${category}</span></td>
+                        <td class="py-2 px-3 font-mono font-semibold text-blue-400">${code}</td>
+                        <td class="py-2 px-3 text-slate-200">${data.desc}</td>
+                        <td class="py-2 px-3 text-right font-bold text-white">€ ${data.spend.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">${cumPct.toFixed(1)} %</td>
+                        <td class="py-2 px-3 text-right text-slate-300">${data.qty.toLocaleString()}</td>
+                        <td class="py-2 px-3 text-right text-slate-300">€ ${avgPrice.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('abcClassACount').innerText = `${countA} art.`;
+            document.getElementById('abcClassASpend').innerText = '€ ' + spendA.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('abcClassBCount').innerText = `${countB} art.`;
+            document.getElementById('abcClassBSpend').innerText = '€ ' + spendB.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('abcClassCCount').innerText = `${countC} art.`;
+            document.getElementById('abcClassCSpend').innerText = '€ ' + spendC.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+            document.getElementById('abcTableBody').innerHTML = tableHtml || '<tr><td colspan="7" class="text-center py-6 text-slate-500">Nessun dato disponibile.</td></tr>';
+            renderPriceHistoryChart();
+        }
+
+        function renderPriceHistoryChart() {
+            const selectedCode = document.getElementById('itemPriceHistorySelect').value;
+            if (!selectedCode) return;
+
+            const priceHistory = [];
+            rawData.forEach(row => {
+                if (row['Articolo//Codice'] === selectedCode) {
+                    const dateObj = parseRowDate(row);
+                    const qty = parseFloat(row['Quantità Doc.']) || 0;
+                    const spend = parseFloat(row['Importo netto Totale']) || 0;
+                    if (dateObj && qty > 0) priceHistory.push({ date: dateObj.fullDate, dateStr: dateObj.yearMonth, unitPrice: spend / qty });
+                }
+            });
+
+            priceHistory.sort((a,b) => a.date - b.date);
+
+            if(chartPriceHistoryInstance) chartPriceHistoryInstance.destroy();
+            const ctxPrice = document.getElementById('chartPriceHistory').getContext('2d');
+            chartPriceHistoryInstance = new Chart(ctxPrice, {
+                type: 'line',
+                data: {
+                    labels: priceHistory.map(p => p.dateStr),
+                    datasets: [{ label: 'Prezzo Unitario (€)', data: priceHistory.map(p => p.unitPrice), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.2, pointRadius: 4, pointBackgroundColor: '#3b82f6' }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: { 
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#cbd5e1' } }
+                    }
+                }
+            });
+        }
+
+        // ================= GESTIONE ORDINI MULTI-ARTICOLO =================
+        function addOrderItemRow() {
+            currentOrderFormItems.push({ desc: '', qty: 1, price: 0 });
+            renderOrderItemsRows();
+        }
+
+        function removeOrderItemRow(index) {
+            if (currentOrderFormItems.length > 1) {
+                currentOrderFormItems.splice(index, 1);
+                renderOrderItemsRows();
+            }
+        }
+
+        function renderOrderItemsRows() {
+            const tbody = document.getElementById('orderItemsTableBody');
+            let html = '';
+            currentOrderFormItems.forEach((item, idx) => {
+                const rowTotal = (parseFloat(item.qty) || 1) * (parseFloat(item.price) || 0);
+                const formattedPrice = item.price !== undefined && item.price !== null ? Number(item.price).toFixed(2) : '0.00';
+                html += `
+                    <tr class="border-b border-slate-800/60">
+                        <td class="p-1.5"><input type="text" value="${item.desc}" oninput="currentOrderFormItems[${idx}].desc = this.value" placeholder="Descrizione articolo" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs outline-none focus:border-blue-500"></td>
+                        <td class="p-1.5"><input type="text" value="${item.qty}" oninput="currentOrderFormItems[${idx}].qty = this.value; renderOrderItemsRows();" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs text-right outline-none focus:border-blue-500"></td>
+                        <td class="p-1.5"><input type="number" step="0.01" min="0" value="${formattedPrice}" onchange="currentOrderFormItems[${idx}].price = parseFloat(this.value)||0; renderOrderItemsRows();" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs text-right outline-none focus:border-blue-500"></td>
+                        <td class="p-1.5 text-right font-bold text-white">€ ${rowTotal.toFixed(2)}</td>
+                        <td class="p-1.5 text-center">
+                            <button type="button" onclick="removeOrderItemRow(${idx})" class="p-1.5 text-rose-400 hover:bg-rose-950/60 rounded transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function addOrder(e) {
+            e.preventDefault();
+            const editIndex = parseInt(document.getElementById('editOrderIndex').value);
+            
+            const newOrd = {
+                codeRDA: document.getElementById('codeRDA').value,
+                codeODA: document.getElementById('codeODA').value,
+                codeDDT: document.getElementById('codeDDT').value,
+                supplier: document.getElementById('supplier').value,
+                department: document.getElementById('department').value,
+                contactPerson: document.getElementById('contactPerson').value,
+                date: document.getElementById('orderDate').value,
+                delivery: document.getElementById('deliveryDate').value,
+                maxDelayDays: parseInt(document.getElementById('maxDelayDays').value) || 0,
+                transport: parseFloat(document.getElementById('transportCost').value) || 0,
+                items: [...currentOrderFormItems],
+                stages: editIndex >= 0 ? orders[editIndex].stages : { inviato: false, confermato: false, spedito: false, consegnato: false },
+                archived: editIndex >= 0 ? orders[editIndex].archived : false
+            };
+
+            if (editIndex >= 0) {
+                orders[editIndex] = newOrd;
+            } else {
+                orders.push(newOrd);
+            }
+
+            saveOrdersToStorage();
+            resetOrderForm();
+            renderOrdersTable();
+            renderScheduleTable();
+        }
+
+        function resetOrderForm() {
+            document.getElementById('orderForm').reset();
+            document.getElementById('editOrderIndex').value = "-1";
+            currentOrderFormItems = [{ desc: '', qty: 1, price: 0 }];
+            renderOrderItemsRows();
+            document.getElementById('formTitle').innerHTML = `<i data-lucide="plus-circle" class="w-4 h-4 text-blue-400"></i> Gestione Registro Ordini`;
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function editOrder(index) {
+            const ord = orders[index];
+            document.getElementById('editOrderIndex').value = index;
+            document.getElementById('codeRDA').value = ord.codeRDA || '';
+            document.getElementById('codeODA').value = ord.codeODA || '';
+            document.getElementById('codeDDT').value = ord.codeDDT || '';
+            document.getElementById('supplier').value = ord.supplier || '';
+            document.getElementById('department').value = ord.department || '';
+            document.getElementById('contactPerson').value = ord.contactPerson || '';
+            document.getElementById('orderDate').value = ord.date || '';
+            document.getElementById('deliveryDate').value = ord.delivery || '';
+            document.getElementById('maxDelayDays').value = ord.maxDelayDays || 0;
+            document.getElementById('transportCost').value = ord.transport || 0;
+
+            currentOrderFormItems = ord.items ? [...ord.items] : [{ desc: ord.desc || '', qty: ord.qty || 1, price: ord.price || 0 }];
+            renderOrderItemsRows();
+
+            document.getElementById('formTitle').innerHTML = `<i data-lucide="edit" class="w-4 h-4 text-amber-400"></i> Modifica Ordine #${index + 1}`;
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function deleteOrder(index) {
+            if (confirm('Sei sicuro di voler eliminare questo ordine?')) {
+                orders.splice(index, 1);
+                saveOrdersToStorage();
+                renderOrdersTable();
+                renderScheduleTable();
+            }
+        }
+
+        function toggleStage(index, stageName) {
+            orders[index].stages[stageName] = !orders[index].stages[stageName];
+            if (orders[index].stages.consegnato) {
+                orders[index].archived = true;
+            }
+            saveOrdersToStorage();
+            renderOrdersTable();
+            renderScheduleTable();
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const filter = document.getElementById('archiveFilter').value;
+
+            let count = 0, delayed = 0, subtotal = 0, totalTransport = 0, grandTotal = 0;
+            let html = '';
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            orders.forEach((ord, index) => {
+                if (filter === 'active' && ord.archived) return;
+                if (filter === 'archived' && !ord.archived) return;
+
+                count++;
+                let ordSub = 0;
+                let itemsListHtml = '';
+                if (ord.items && ord.items.length > 0) {
+                    ord.items.forEach(it => {
+                        const sub = (parseFloat(it.qty) || 1) * (parseFloat(it.price) || 0);
+                        ordSub += sub;
+                        itemsListHtml += `<div class="text-[11px] text-slate-300">&bull; ${it.desc} (Q.tà: ${it.qty} - € ${sub.toFixed(2)})</div>`;
+                    });
+                } else {
+                    ordSub = (parseFloat(ord.qty) || 1) * (parseFloat(ord.price) || 0);
+                    itemsListHtml = `<div class="text-[11px] text-slate-300">&bull; ${ord.desc || 'N/D'}</div>`;
+                }
+
+                const transport = parseFloat(ord.transport) || 0;
+                const ordTotalNet = ordSub + transport;
+
+                subtotal += ordSub;
+                totalTransport += transport;
+                grandTotal += ordTotalNet;
+
+                // Calcolo ritardo
+                const deliveryDate = new Date(ord.delivery);
+                deliveryDate.setHours(0,0,0,0);
+                const tolerance = parseInt(ord.maxDelayDays) || 0;
+                const maxAllowedDate = new Date(deliveryDate);
+                maxAllowedDate.setDate(maxAllowedDate.getDate() + tolerance);
+
+                let isDelayed = false;
+                if (!ord.stages.consegnato && today > maxAllowedDate) {
+                    isDelayed = true;
+                    delayed++;
+                }
+
+                let statusBadge = ord.archived ? 
+                    `<span class="bg-emerald-950 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">Concluso</span>` : 
+                    (isDelayed ? `<span class="bg-rose-950 text-rose-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-rose-800 animate-pulse">In Ritardo</span>` : `<span class="bg-blue-950 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-800">In Corso</span>`);
+
+                html += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2.5 px-3 text-center font-mono">
+                            <div class="text-blue-400 font-bold">${ord.codeRDA || '-'}</div>
+                            <div class="text-slate-400 text-[10px]">${ord.codeODA || '-'} / ${ord.codeDDT || '-'}</div>
+                        </td>
+                        <td class="py-2.5 px-3 font-semibold text-white">${ord.supplier}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="text-slate-200">${ord.department || '-'}</div>
+                            <div class="text-[10px] text-slate-400">${ord.contactPerson || '-'}</div>
+                        </td>
+                        <td class="py-2.5 px-3 max-w-xs">${itemsListHtml}</td>
+                        <td class="py-2.5 px-3 text-center text-[11px]">
+                            <div>${ord.date}</div>
+                            <div class="font-bold text-slate-200">${ord.delivery}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center text-slate-300">${ord.maxDelayDays} gg</td>
+                        <td class="py-2.5 px-3 text-right text-slate-300">€ ${transport.toFixed(2)}</td>
+                        <td class="py-2.5 px-3 text-right font-bold text-white">€ ${ordTotalNet.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="flex flex-wrap gap-1">
+                                <label class="stage-item ${ord.stages.inviato ? 'completed' : ''}"><input type="checkbox" ${ord.stages.inviato ? 'checked' : ''} onchange="toggleStage(${index}, 'inviato')"> Inv.</label>
+                                <label class="stage-item ${ord.stages.confermato ? 'completed' : ''}"><input type="checkbox" ${ord.stages.confermato ? 'checked' : ''} onchange="toggleStage(${index}, 'confermato')"> Conf.</label>
+                                <label class="stage-item ${ord.stages.spedito ? 'completed' : ''}"><input type="checkbox" ${ord.stages.spedito ? 'checked' : ''} onchange="toggleStage(${index}, 'spedito')"> Sped.</label>
+                                <label class="stage-item ${ord.stages.consegnato ? 'completed' : ''}"><input type="checkbox" ${ord.stages.consegnato ? 'checked' : ''} onchange="toggleStage(${index}, 'consegnato')"> Cons.</label>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">${statusBadge}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="editOrder(${index})" class="p-1.5 text-blue-400 hover:bg-blue-950/60 rounded transition" title="Modifica"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="deleteOrder(${index})" class="p-1.5 text-rose-400 hover:bg-rose-950/60 rounded transition" title="Elimina"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="11" class="text-center py-6 text-slate-500">Nessun ordine presente nel registro.</td></tr>';
+            lucide.createIcons();
+
+            document.getElementById('stat-ord-count').innerText = count;
+            document.getElementById('stat-ord-delayed').innerText = delayed;
+            document.getElementById('stat-ord-subtotal').innerText = '€ ' + subtotal.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-ord-transport').innerText = '€ ' + totalTransport.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-ord-total').innerText = '€ ' + grandTotal.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function renderScheduleTable() {
+            const tbody = document.getElementById('scheduleTableBody');
+            let html = '';
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            // Ordina gli ordini per data di consegna crescente (più urgenti prima)
+            const sortedIndices = orders.map((ord, idx) => ({ ord, idx })).sort((a,b) => new Date(a.ord.delivery) - new Date(b.ord.delivery));
+
+            sortedIndices.forEach(({ ord, idx }) => {
+                if (ord.archived) return; // Salta gli archiviati
+
+                let itemsStr = '';
+                if (ord.items && ord.items.length > 0) {
+                    itemsStr = ord.items.map(it => `${it.desc} (${it.qty})`).join(', ');
+                } else {
+                    itemsStr = ord.desc || 'N/D';
+                }
+
+                const deliveryDate = new Date(ord.delivery);
+                deliveryDate.setHours(0,0,0,0);
+                const diffTime = deliveryDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                let priorityBadge = '';
+                if (diffDays < 0) priorityBadge = `<span class="bg-rose-950 text-rose-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-rose-800">Scaduto da ${Math.abs(diffDays)} gg</span>`;
+                else if (diffDays === 0) priorityBadge = `<span class="bg-amber-950 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-800">In Consegna OGGI</span>`;
+                else if (diffDays <= 3) priorityBadge = `<span class="bg-amber-950 text-amber-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-800">Urgente (${diffDays} gg)</span>`;
+                else priorityBadge = `<span class="bg-blue-950 text-blue-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-blue-800">Normale (${diffDays} gg)</span>`;
+
+                html += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2.5 px-3 text-center font-bold text-white">${ord.delivery}</td>
+                        <td class="py-2.5 px-3 text-center">${priorityBadge}</td>
+                        <td class="py-2.5 px-3 font-semibold text-white">${ord.supplier}</td>
+                        <td class="py-2.5 px-3 text-slate-300 max-w-xs">${itemsStr}</td>
+                        <td class="py-2.5 px-3 text-center font-mono text-slate-400">${ord.codeRDA || '-'} / ${ord.codeODA || '-'}</td>
+                        <td class="py-2.5 px-3 text-slate-300">${ord.contactPerson || ord.department || '-'}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex justify-center gap-1">
+                                <label class="stage-item ${ord.stages.consegnato ? 'completed' : ''}"><input type="checkbox" ${ord.stages.consegnato ? 'checked' : ''} onchange="toggleStage(${idx}, 'consegnato')"> Consegnato</label>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="switchTab('tab-registro')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg transition">Gestisci</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="8" class="text-center py-6 text-slate-500">Nessuna consegna attiva in scadenza.</td></tr>';
+            lucide.createIcons();
+        }
+
+        function renderReportsTab() {
+            document.getElementById('repCurrentDate').innerText = new Date().toLocaleDateString('it-IT');
+            const mainVendor = document.getElementById('filterVendor').value;
+            document.getElementById('repMainVendorName').innerText = mainVendor !== 'ALL' ? mainVendor : 'Tutti i Fornitori';
+            const secVendor = document.getElementById('secondaryVendorName').value || 'Nuovo Fornitore';
+            document.getElementById('repVendorName').innerText = secVendor;
+
+            let currentSpendTotal = 0;
+            filteredData.forEach(row => { currentSpendTotal += parseFloat(row['Importo netto Totale']) || 0; });
+
+            document.getElementById('repExecCurrentSpend').innerText = '€ ' + currentSpendTotal.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('repExecOptimalSpend').innerText = document.getElementById('fctOptimalTotal').innerText;
+            document.getElementById('repExecOptSavings').innerText = document.getElementById('cmpKpiTotalSavings').innerText;
+
+            const contentBox = document.getElementById('repDynamicContent');
+            contentBox.innerHTML = `
+                <p>1. <strong>Analisi della Spesa Storica</strong>: Sulla base del perimetro selezionato, la spesa complessiva ammonta a <strong>€ ${currentSpendTotal.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong>, focalizzata principalmente sulle classi ad alto impatto Pareto (Classe A).</p>
+                <p>2. <strong>Potenziale di Ottimizzazione con ${secVendor}</strong>: L'importazione del listino offerta concorrente evidenzia un potenziale di risparmio concreto su ${document.getElementById('cmpKpiMatched').innerText.split('/')[0].trim()} articoli confrontati.</p>
+                <p>3. <strong>Raccomandazione Strategica</strong>: Si consiglia di procedere con una negoziazione mirata sugli articoli ad alta rotazione (ABC Classe A) sfruttando le condizioni migliorative del nuovo listino, mantenendo al contempo gli attuali accordi laddove più vantaggiosi (strategia Best Price).</p>
+            `;
+        }
+
+        // ================= GESTIONE MODULO OFFERTE =================
+        function addOfferItemRow() {
+            currentOfferFormItems.push({ desc: '', qty: '1' });
+            renderOfferItemsRows();
+        }
+
+        function removeOfferItemRow(index) {
+            if (currentOfferFormItems.length > 1) {
+                currentOfferFormItems.splice(index, 1);
+                renderOfferItemsRows();
+            }
+        }
+
+        function renderOfferItemsRows() {
+            const tbody = document.getElementById('offerItemsTableBody');
+            if(!tbody) return;
+            let html = '';
+            currentOfferFormItems.forEach((item, idx) => {
+                html += `
+                    <tr class="border-b border-slate-800/60">
+                        <td class="p-1.5"><input type="text" value="${item.desc}" oninput="currentOfferFormItems[${idx}].desc = this.value" placeholder="Descrizione articolo richiesto" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded px-2.5 py-1 text-xs outline-none focus:border-purple-500"></td>
+                        <td class="p-1.5"><input type="text" value="${item.qty}" oninput="currentOfferFormItems[${idx}].qty = this.value" placeholder="Es. 10 pz / 100 kg" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded px-2.5 py-1 text-xs text-right outline-none focus:border-purple-500"></td>
+                        <td class="p-1.5 text-center">
+                            <button type="button" onclick="removeOfferItemRow(${idx})" class="p-1.5 text-rose-400 hover:bg-rose-950/60 rounded transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function addOrUpdateOffer(e) {
+            e.preventDefault();
+            const editIndex = parseInt(document.getElementById('editOfferIndex').value);
+
+            const newOff = {
+                code: editIndex >= 0 ? offers[editIndex].code : 'OFF-2026-' + String(offers.length + 1).padStart(3, '0'),
+                internalRdaCode: document.getElementById('internalRdaCode').value,
+                internalCostCenter: document.getElementById('internalCostCenter').value,
+                internalRequester: document.getElementById('internalRequester').value,
+                internalRdaDate: document.getElementById('internalRdaDate').value,
+                customer: document.getElementById('offerCustomer').value,
+                contact: document.getElementById('offerContact').value,
+                deliveryDate: document.getElementById('offerDeliveryDate').value,
+                date: editIndex >= 0 ? offers[editIndex].date : new Date().toISOString().split('T')[0],
+                notes: document.getElementById('offerNotes').value,
+                archived: editIndex >= 0 ? offers[editIndex].archived : false,
+                stages: editIndex >= 0 ? offers[editIndex].stages : { inviata: true, ricevuta: false },
+                items: [...currentOfferFormItems]
+            };
+
+            if (editIndex >= 0) {
+                offers[editIndex] = newOff;
+            } else {
+                offers.push(newOff);
+            }
+
+            saveOffersToStorage();
+            resetOfferForm();
+            switchTab('tab-registro-offerte');
+        }
+
+        function resetOfferForm() {
+            document.getElementById('offerForm').reset();
+            document.getElementById('editOfferIndex').value = "-1";
+            currentOfferFormItems = [{ desc: '', qty: '1' }];
+            renderOfferItemsRows();
+            document.getElementById('emailPreviewContainer').classList.add('hidden');
+            document.getElementById('offerFormTitle').innerText = "Nuova Richiesta Offerta / RdO";
+            document.getElementById('cancelOfferEditBtn').classList.add('hidden');
+            lucide.createIcons();
+        }
+
+        function generateOfferEmail() {
+            const customer = document.getElementById('offerCustomer').value || '[Nome Fornitore]';
+            const contact = document.getElementById('offerContact').value || 'Spett.le Commerciale';
+            const rda = document.getElementById('internalRdaCode').value || '[RDA]';
+            const delivery = document.getElementById('offerDeliveryDate').value || '[Data Consegna]';
+            const notes = document.getElementById('offerNotes').value;
+
+            let itemsText = '';
+            currentOfferFormItems.forEach((it, i) => {
+                itemsText += `- ${it.desc} (Q.tà richiesta: ${it.qty})\n`;
+            });
+
+            const emailBody = `Gentile ${contact},\n\nCon la presente siamo a richiedere VS migliore offerta commerciale in riferimento alla RdA ${rda}.\n\nElenco articoli richiesti:\n${itemsText}\nData consegna tassativa richiesta: ${delivery}\n\nNote / Condizioni:\n${notes}\n\nRestiamo in attesa di VS cortese riscontro entro i termini indicati.\n\nCordiali saluti,\nUfficio Acquisti`;
+
+            document.getElementById('emailPreviewText').value = emailBody;
+            document.getElementById('emailPreviewContainer').classList.remove('hidden');
+        }
+
+        function copyEmailText() {
+            const textVal = document.getElementById('emailPreviewText');
+            textVal.select();
+            navigator.clipboard.writeText(textVal.value);
+            alert('Testo email copiato negli appunti!');
+        }
+
+        function renderOffersTable() {
+            const tbody = document.getElementById('offersTableBody');
+            const filter = document.getElementById('offerArchiveFilter').value;
+            if(!tbody) return;
+
+            let html = '';
+            offers.forEach((off, index) => {
+                if (filter === 'NO' && off.archived) return;
+                if (filter === 'SI' && !off.archived) return;
+
+                let itemsHtml = '';
+                if (off.items && off.items.length > 0) {
+                    off.items.forEach(it => { itemsHtml += `<div class="text-[11px] text-slate-300">&bull; ${it.desc} (Q.tà: ${it.qty})</div>`; });
+                }
+
+                let statusBadge = off.archived ? 
+                    `<span class="bg-emerald-950 text-emerald-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-800">Archiviata</span>` : 
+                    `<span class="bg-purple-950 text-purple-300 text-[9px] font-bold px-2 py-0.5 rounded-full border border-purple-800">Attiva</span>`;
+
+                html += `
+                    <tr class="hover:bg-slate-900/60 border-b border-slate-800/60">
+                        <td class="py-2.5 px-3 text-center font-mono font-bold text-purple-400">${off.code}</td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-semibold text-white">${off.internalRdaCode || '-'}</div>
+                            <div class="text-[10px] text-slate-400">${off.internalCostCenter || ''}</div>
+                        </td>
+                        <td class="py-2.5 px-3">
+                            <div class="font-semibold text-white">${off.customer}</div>
+                            <div class="text-[10px] text-slate-400">${off.contact || ''}</div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center text-[11px]">
+                            <div>Ems: ${off.date}</div>
+                            <div class="font-bold text-slate-200">Con: ${off.deliveryDate}</div>
+                        </td>
+                        <td class="py-2.5 px-3 max-w-xs">${itemsHtml}</td>
+                        <td class="py-2.5 px-3 text-slate-400 text-[11px]">${off.notes || '-'}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex justify-center gap-1">
+                                <label class="stage-item ${off.stages.inviata ? 'completed' : ''}"><input type="checkbox" ${off.stages.inviata ? 'checked' : ''} onchange="toggleOfferStage(${index}, 'inviata')"> Inv.</label>
+                                <label class="stage-item ${off.stages.ricevuta ? 'completed' : ''}"><input type="checkbox" ${off.stages.ricevuta ? 'checked' : ''} onchange="toggleOfferStage(${index}, 'ricevuta')"> Ric.</label>
+                            </div>
+                        </td>
+                        <td class="py-2.5 px-3 text-center">${statusBadge}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <div class="flex items-center justify-center gap-1">
+                                <button onclick="editOffer(${index})" class="p-1.5 text-purple-400 hover:bg-purple-950/60 rounded transition" title="Modifica"><i data-lucide="edit" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="deleteOffer(${index})" class="p-1.5 text-rose-400 hover:bg-rose-950/60 rounded transition" title="Elimina"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html || '<tr><td colspan="9" class="text-center py-6 text-slate-500">Nessuna richiesta offerta registrata.</td></tr>';
+            lucide.createIcons();
+        }
+
+        function toggleOfferStage(index, stageName) {
+            offers[index].stages[stageName] = !offers[index].stages[stageName];
+            if (offers[index].stages.ricevuta) {
+                offers[index].archived = true;
+            }
+            saveOffersToStorage();
+            renderOffersTable();
+        }
+
+        function editOffer(index) {
+            const off = offers[index];
+            document.getElementById('editOfferIndex').value = index;
+            document.getElementById('internalRdaCode').value = off.internalRdaCode || '';
+            document.getElementById('internalCostCenter').value = off.internalCostCenter || '';
+            document.getElementById('internalRequester').value = off.internalRequester || '';
+            document.getElementById('internalRdaDate').value = off.internalRdaDate || '';
+            document.getElementById('offerCustomer').value = off.customer || '';
+            document.getElementById('offerContact').value = off.contact || '';
+            document.getElementById('offerDeliveryDate').value = off.deliveryDate || '';
+            document.getElementById('offerNotes').value = off.notes || '';
+
+            currentOfferFormItems = off.items ? [...off.items] : [{ desc: '', qty: '1' }];
+            renderOfferItemsRows();
+
+            document.getElementById('offerFormTitle').innerText = `Modifica RdO #${off.code}`;
+            document.getElementById('cancelOfferEditBtn').classList.remove('hidden');
+            switchTab('tab-nuova-offerta');
+        }
+
+        function deleteOffer(index) {
+            if (confirm('Sei sicuro di voler eliminare questa richiesta offerta?')) {
+                offers.splice(index, 1);
+                saveOffersToStorage();
+                renderOffersTable();
+            }
+        }
+
+        function exportOffersToExcel() {
+            exportTableToExcel('offersTableBody', 'Registro_Offerte');
+        }
+
+        function exportOrdersToExcel() {
+            exportTableToExcel('ordersTableBody', 'Registro_Ordini');
+        }
+
+        function importOrdersFromExcel(input) {
+            if(!input.files.length) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const firstSheet = workbook.SheetNames[0];
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet]);
+
+                rows.forEach(r => {
+                    orders.push({
+                        codeRDA: r['RDA (3Z)'] || '',
+                        codeODA: r['ODA (3A)'] || '',
+                        codeDDT: r['DDT (4A)'] || '',
+                        supplier: r['Fornitore'] || 'Fornitore N/D',
+                        department: r['Reparto'] || '',
+                        contactPerson: r['Referente'] || '',
+                        date: r['Data Ordine'] || new Date().toISOString().split('T')[0],
+                        delivery: r['Data Consegna Prevista'] || new Date().toISOString().split('T')[0],
+                        maxDelayDays: parseInt(r['Tolleranza Ritardo (GG)']) || 0,
+                        transport: parseFloat(r['Trasporto (€)']) || 0,
+                        items: [{ desc: r['Descrizione'] || 'Articolo', qty: parseFloat(r['Quantità']) || 1, price: parseFloat(r['Prezzo Unitario (€)']) || 0 }],
+                        stages: { inviato: true, confermato: false, spedito: false, consegnato: false },
+                        archived: false
+                    });
+                });
+
+                saveOrdersToStorage();
+                renderOrdersTable();
+                renderScheduleTable();
+                alert(`Importati con successo ${rows.length} ordini!`);
+            };
+            reader.readAsArrayBuffer(input.files[0]);
+        }
+
+        // Inizializzazione prima tabella vuota
+        renderDashboardTable();
+        renderOrderItemsRows();
+        renderOfferItemsRows();
     </script>
 </body>
 </html>
