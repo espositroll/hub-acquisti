@@ -1,17 +1,44 @@
-/* Estensioni Globali per il Layout Glassmorphism */
-
-/* Sidebar e Header */
-.sidebar, header, .navbar {
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-right: 1px solid rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+/* Design System: Minimal, Glass e Chiaro */
+:root {
+  --bg-main: #F8F9FA;
+  --bg-gradient: radial-gradient(circle at 10% 20%, rgba(216, 241, 233, 0.4) 0%, rgba(235, 243, 255, 0.4) 90%);
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+  --text-primary: #1E293B;
+  --text-secondary: #64748B;
+  --accent-color: #3B82F6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --transition: all 0.3s ease;
 }
 
-/* Pulsanti in stile Glass */
-.btn-glass, button, .button {
+body {
+  background-color: var(--bg-main);
+  background-image: var(--bg-gradient);
+  color: var(--text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  transition: var(--transition);
+}
+
+.glass-panel:hover {
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.06);
+}
+
+button, .btn-glass {
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -25,23 +52,28 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
-.btn-glass:hover, button:hover, .button:hover {
+button:hover {
   background: rgba(255, 255, 255, 0.85);
   border-color: var(--accent-color);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
 }
 
-/* Card e Contenitori Generici */
-div, section, article, aside {
-  /* Applicazione selettiva o estesa tramite classe container */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(203, 213, 225, 0.6);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  color: var(--text-primary);
+  backdrop-filter: blur(8px);
+  transition: var(--transition);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.glass-container {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: var(--glass-border);
-  box-shadow: var(--glass-shadow);
-  border-radius: var(--radius-lg);
+input:focus, select:focus, textarea:focus {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px var(--accent-glow);
 }
