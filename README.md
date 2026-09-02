@@ -30,6 +30,14 @@ tracciato in *Registro Ordini* e nello *Scadenzario*. Tutti i dati sono
 salvati nel `localStorage` del browser sotto la chiave
 `procura_hub_pratiche_v1`.
 
+Ogni sotto-sezione (Richieste, RFQ, Registro Ordini, Scadenzario) ha le sue
+azioni Excel: **Scarica template**, **Importa da Excel** per il caricamento
+massivo e **Esporta archivio** per il backup/condivisione dei dati. Il
+template RFQ funziona per aggiornamento massivo (la colonna "ID Richiesta"
+deve corrispondere a una richiesta già esistente); Scadenzario riusa lo
+stesso archivio ordini del Registro, essendo la stessa pratica vista con un
+ordinamento diverso.
+
 ### 2. Analisi & Forecast
 Modulo indipendente, per scelta: non condivide dati con la Gestione Acquisti
 perché lavora sull'estrazione Excel del gestionale aziendale, caricata di

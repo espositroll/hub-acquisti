@@ -76,6 +76,15 @@
           </form>
         </div>
 
+        <div class="panel-title" style="margin-bottom:14px;">
+          <span>Elenco richieste</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-outline success btn-sm" onclick="downloadRichiesteTemplate()">Scarica template</button>
+            <button class="btn btn-success btn-sm" onclick="openRichiesteImportModal()">Importa da Excel</button>
+            <button class="btn btn-success btn-sm" onclick="exportRichiesteToExcel()">Esporta archivio</button>
+          </div>
+        </div>
+
         <div class="search-bar">
           <span>🔍</span>
           <input type="text" id="richieste-search" oninput="renderRichiesteTable()" placeholder="Cerca per reparto, richiedente, articolo, ID...">
@@ -100,8 +109,39 @@
         </div>
       </div>
 
+      <!-- MODALE: IMPORT EXCEL RICHIESTE -->
+      <div class="modal-overlay" id="modal-import-richieste">
+        <div class="modal-panel" style="max-width:560px;">
+          <div class="modal-header">
+            <h2>Importa richieste da Excel</h2>
+            <button class="close-modal" onclick="closeRichiesteImportModal()">✕</button>
+          </div>
+          <p class="text-muted" style="font-size:12.5px; margin-bottom:16px;">Seleziona un file Excel (.xlsx) strutturato come il template. Usa la stessa colonna "Rif. Richiesta" su più righe per raggruppare più articoli nella stessa richiesta.</p>
+          <div class="upload-dropzone" onclick="document.getElementById('richieste-import-file-input').click()">
+            <div class="upload-icon">📊</div>
+            <strong>Clicca per selezionare il file Excel</strong>
+            <p>oppure trascina il file qui</p>
+            <input type="file" id="richieste-import-file-input" accept=".xlsx,.xls" class="hidden" onchange="handleRichiesteImportFile(event)">
+          </div>
+          <div id="richieste-import-summary" style="font-size:12.5px; font-weight:600;"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" onclick="closeRichiesteImportModal()">Annulla</button>
+            <button type="button" class="btn btn-outline success" onclick="downloadRichiesteTemplate()">Scarica prima il template</button>
+          </div>
+        </div>
+      </div>
+
       <!-- SUBVIEW: RFQ -->
       <div id="acq-rfq" class="subview">
+        <div class="panel-title" style="margin-bottom:14px;">
+          <span>Richieste di offerta</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-outline success btn-sm" onclick="downloadRfqTemplate()">Scarica template</button>
+            <button class="btn btn-success btn-sm" onclick="openRfqImportModal()">Importa da Excel</button>
+            <button class="btn btn-success btn-sm" onclick="exportRfqToExcel()">Esporta archivio</button>
+          </div>
+        </div>
+
         <div style="display:grid; grid-template-columns: 1fr 1.4fr; gap:20px;">
           <div class="glass-panel">
             <div class="panel-title"><span>Parametri RFQ</span></div>
@@ -117,10 +157,6 @@
               <div class="form-group">
                 <label for="rfq-email">Email fornitore</label>
                 <input type="email" id="rfq-email" placeholder="email@fornitore.it" oninput="saveRfqFieldsAndPreview()">
-              </div>
-              <div class="form-group">
-                <label for="rfq-scadenza">Scadenza offerta</label>
-                <input type="date" id="rfq-scadenza" onchange="saveRfqFieldsAndPreview()">
               </div>
               <div class="form-group">
                 <label for="rfq-note">Note / condizioni</label>
@@ -139,6 +175,44 @@
               <button class="btn btn-secondary btn-sm" onclick="copyRfqEmail()">Copia testo</button>
             </div>
             <div id="rfq-preview-content" class="rfq-preview">Seleziona una richiesta per generare l'anteprima.</div>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" id="rfq-table-search" oninput="renderRfqTable()" placeholder="Cerca per ID, fornitore, articolo...">
+        </div>
+
+        <div class="solid-panel">
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr><th>ID</th><th>Fornitore</th><th>Articoli</th><th class="text-center">Stato</th><th class="text-center">Azioni</th></tr>
+              </thead>
+              <tbody id="rfq-registry-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODALE: IMPORT EXCEL RFQ -->
+      <div class="modal-overlay" id="modal-import-rfq">
+        <div class="modal-panel" style="max-width:560px;">
+          <div class="modal-header">
+            <h2>Aggiorna RFQ da Excel</h2>
+            <button class="close-modal" onclick="closeRfqImportModal()">✕</button>
+          </div>
+          <p class="text-muted" style="font-size:12.5px; margin-bottom:16px;">Il file deve contenere la colonna "ID Richiesta" con un ID già esistente: le righe aggiornano fornitore, email, note e stato della RFQ corrispondente.</p>
+          <div class="upload-dropzone" onclick="document.getElementById('rfq-import-file-input').click()">
+            <div class="upload-icon">📊</div>
+            <strong>Clicca per selezionare il file Excel</strong>
+            <p>oppure trascina il file qui</p>
+            <input type="file" id="rfq-import-file-input" accept=".xlsx,.xls" class="hidden" onchange="handleRfqImportFile(event)">
+          </div>
+          <div id="rfq-import-summary" style="font-size:12.5px; font-weight:600;"></div>
+          <div class="btn-row">
+            <button type="button" class="btn btn-secondary" onclick="closeRfqImportModal()">Annulla</button>
+            <button type="button" class="btn btn-outline success" onclick="downloadRfqTemplate()">Scarica prima il template</button>
           </div>
         </div>
       </div>
@@ -160,6 +234,28 @@
           <div class="stat-card"><div class="label">Imponibile merci</div><div class="value" id="stat-ordini-subtotal">€ 0,00</div></div>
           <div class="stat-card"><div class="label">Trasporto</div><div class="value" id="stat-ordini-transport">€ 0,00</div></div>
           <div class="stat-card accent"><div class="label">Totale generale</div><div class="value" id="stat-ordini-total">€ 0,00</div></div>
+        </div>
+
+        <div class="glass-panel">
+          <div class="panel-title"><span>Inserimento manuale nuovo ordine</span><span class="hint">per ordini che non passano da Richieste / RFQ</span></div>
+          <form id="form-manual-ordine" onsubmit="handleManualOrderSubmit(event)">
+            <div class="form-grid">
+              <div class="form-group"><label for="manual-rda">RDA</label><input type="text" id="manual-rda" placeholder="es. 3Z-12345"></div>
+              <div class="form-group"><label for="manual-oda">ODA</label><input type="text" id="manual-oda" placeholder="es. 3A-67890"></div>
+              <div class="form-group"><label for="manual-ddt">DDT</label><input type="text" id="manual-ddt" placeholder="es. 4A-99812"></div>
+              <div class="form-group span-2"><label for="manual-fornitore">Fornitore</label><input type="text" id="manual-fornitore" required placeholder="Nome o ragione sociale fornitore"></div>
+              <div class="form-group"><label for="manual-reparto">Reparto richiedente</label><input type="text" id="manual-reparto" placeholder="es. Produzione / IT"></div>
+              <div class="form-group"><label for="manual-referente">Referente</label><input type="text" id="manual-referente" placeholder="es. Ing. Rossi"></div>
+              <div class="form-group span-2"><label for="manual-descrizione">Descrizione articolo / servizio</label><input type="text" id="manual-descrizione" required placeholder="Descrizione del materiale ordinato"></div>
+              <div class="form-group"><label for="manual-data-ordine">Data ordine</label><input type="date" id="manual-data-ordine" required></div>
+              <div class="form-group"><label for="manual-data-consegna">Data consegna prevista</label><input type="date" id="manual-data-consegna" required></div>
+              <div class="form-group"><label for="manual-max-ritardo">GG max ritardo tollerati</label><input type="number" id="manual-max-ritardo" min="0" value="0"></div>
+              <div class="form-group"><label for="manual-qty">Quantità</label><input type="number" id="manual-qty" min="1" value="1" required></div>
+              <div class="form-group"><label for="manual-price">Prezzo unitario (€)</label><input type="number" id="manual-price" step="0.01" min="0" placeholder="0.00" required></div>
+              <div class="form-group"><label for="manual-transport">Costo trasporto (€)</label><input type="number" id="manual-transport" step="0.01" min="0" value="0.00"></div>
+              <div class="btn-row"><button type="submit" class="btn">Salva ordine</button></div>
+            </div>
+          </form>
         </div>
 
         <div class="search-bar">
@@ -205,6 +301,14 @@
 
       <!-- SUBVIEW: SCADENZARIO -->
       <div id="acq-scadenzario" class="subview">
+        <div class="panel-title" style="margin-bottom:14px;">
+          <span>Scadenzario consegne</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-outline success btn-sm" onclick="downloadOrderTemplate()">Scarica template</button>
+            <button class="btn btn-success btn-sm" onclick="openImportModal()">Importa da Excel</button>
+            <button class="btn btn-success btn-sm" onclick="exportOrdersToExcel()">Esporta archivio</button>
+          </div>
+        </div>
         <div class="search-bar">
           <div class="filter-group" style="border-left:none; padding-left:0;">
             <label for="scad-archive-filter">Archiviati</label>
